@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROYRAAN — Seasonal Decoration Wholesale</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Sarabun:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+
+  <style>
+    /* ─── TOKENS ─── */
+    :root {
+      --dark:   #141413;
+      --light:  #faf9f5;
+      --orange: #d97757;
+      --n100:   #faf9f5;
+      --n200:   #e0ddd4;
+      --n400:   #b0aea5;
+      --n600:   #7a7870;
+      --n800:   #3d3a37;
+      --n900:   #141413;
+      --fd: 'Cormorant Garamond', Georgia, serif;
+      --fb: 'Sarabun', sans-serif;
+      --fm: 'IBM Plex Mono', monospace;
+      --border: 0.5px solid #2a2826;
+      --r: 2px;
+    }
+
+    /* ─── LIGHT MODE ─── */
+    body.light-mode {
+      --dark:  #faf9f5;
+      --light: #141413;
+      --n400:  #5a5852;
+      --n600:  #7a7870;
+      --n800:  #e0ddd4;
+      --border: 0.5px solid #d0cdc4;
+      background: #faf9f5;
+      color: #141413;
+    }
+    body.light-mode header { background: rgba(250,249,245,0.92); }
+    body.light-mode header.scrolled { background: rgba(250,249,245,0.98); }
+    body.light-mode .marquee-strip { background: #e8e5dc; }
+    body.light-mode .marquee-item { color: #5a5852; }
+    body.light-mode .scard { background: #f0ede4; }
+    body.light-mode .modal { background: #f0ede4; }
+    body.light-mode .mobile-menu { background: #faf9f5; }
+    body.light-mode footer { background: #f0ede4; }
+    body.light-mode #royraan-map { opacity: 0.85; }
+    body.light-mode .hero-sub { color: #5a5852; }
+    body.light-mode .footer-tagline { color: #7a7870; }
+    body.light-mode .footer-col-label { color: #7a7870; }
+    body.light-mode .footer-col-body { color: #7a7870; }
+    body.light-mode .mono { color: #7a7870; }
+    body.light-mode .sticky-cta { background: rgba(250,249,245,0.97); border-top-color: #d0cdc4; }
+
+    .logo-img { filter: invert(1); }
+    body.light-mode .logo-img { filter: none; }
+    .footer-logo { filter: invert(1); }
+    body.light-mode .footer-logo { filter: none; }
+
+    /* ─── THEME TOGGLE ─── */
+    .theme-toggle {
+      background: none;
+      border: 0.5px solid var(--n800);
+      border-radius: var(--r);
+      color: var(--n400);
+      font-family: var(--fm);
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .18s, border-color .18s;
+      white-space: nowrap;
+    }
+    .theme-toggle:hover { color: var(--light); border-color: var(--n600); }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--dark);
+      color: var(--light);
+      font-family: var(--fb);
+      font-size: 14px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+
+    /* ─── UTILITIES ─── */
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .mono {
+      font-family: var(--fm);
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--n400);
+    }
+    .section-eyebrow { margin-bottom: 16px; }
+    .section-title {
+      font-family: var(--fd);
+      font-size: clamp(28px, 3.5vw, 42px);
+      font-weight: 300;
+      line-height: 1.15;
+    }
+
+    /* ─── REVEAL ANIMATIONS ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+    .reveal-delay-5 { transition-delay: .5s; }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 24px;
+      border-radius: var(--r);
+      font-family: var(--fb);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: opacity .18s, transform .18s;
+      white-space: nowrap;
+    }
+    .btn:hover { opacity: .82; transform: translateY(-1px); }
+    .btn:active { transform: scale(.98); opacity: .75; }
+    .btn-accent  { background: var(--orange); color: var(--light); }
+    .btn-outline { background: transparent; color: var(--n400); border: 0.5px solid var(--n800); }
+    .btn-full { width: 100%; justify-content: center; }
+
+    /* ════ HEADER ════ */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(20,20,19,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: var(--border);
+      transition: background .3s;
+    }
+    header.scrolled { background: rgba(20,20,19,0.98); }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .logo-img { height: 34px; width: auto; }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-link {
+      font-family: var(--fm);
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--n400);
+      transition: color .18s;
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 0.5px;
+      background: var(--orange);
+      transform: scaleX(0);
+      transition: transform .25s ease;
+      transform-origin: left;
+    }
+    .nav-link:hover { color: var(--light); }
+    .nav-link:hover::after { transform: scaleX(1); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 22px;
+      height: 0.5px;
+      background: var(--light);
+      transition: transform .25s, opacity .25s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+
+    /* ════ HERO ════ */
+    .hero { padding: 96px 0 80px; overflow: hidden; }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .hero-eyebrow { margin-bottom: 24px; }
+    .hero-h1 {
+      font-family: var(--fd);
+      font-size: clamp(58px, 7.2vw, 101px);
+      font-weight: 300;
+      line-height: 1.05;
+      margin-bottom: 24px;
+    }
+    .hero-h1 .accent { font-style: italic; color: var(--orange); }
+    .hero-h1 .hero-thai-sub {
+      display: block;
+      font-family: var(--fb);
+      font-size: clamp(15px, 1.6vw, 21px);
+      font-style: normal;
+      font-weight: 400;
+      color: var(--light);
+      line-height: 1.6;
+      margin-top: 10px;
+      letter-spacing: 0;
+    }
+    .hero-sub {
+      font-size: 14px;
+      color: var(--n400);
+      margin-bottom: 32px;
+      line-height: 1.8;
+    }
+    .hero-sub strong { color: var(--light); font-weight: 500; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* 2×2 hero grid */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      aspect-ratio: 1;
+    }
+    .hcard {
+      position: relative;
+      border-radius: var(--r);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 16px;
+      min-height: 180px;
+      cursor: pointer;
+      transition: transform .3s ease;
+    }
+    .hcard:hover { transform: scale(1.02); }
+    .hcard:active { transform: scale(.97); }
+    .hcard-icon {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 72px;
+      opacity: .18;
+      pointer-events: none;
+      user-select: none;
+      transition: opacity .3s, font-size .3s;
+    }
+    .hcard:hover .hcard-icon { opacity: .28; font-size: 80px; }
+    .hcard-season {
+      font-family: var(--fm);
+      font-size: 9px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.4);
+      margin-bottom: 4px;
+      position: relative;
+    }
+    .hcard-name {
+      font-family: var(--fd);
+      font-size: 22px;
+      font-weight: 300;
+      color: #fff;
+      position: relative;
+    }
+    .hc-halloween { background: #140a08; border: 0.5px solid rgba(232,93,36,.25); }
+    .hc-christmas { background: #060d06; border: 0.5px solid rgba(178,34,34,.25); }
+    .hc-valentine { background: #1a0808; border: 0.5px solid rgba(192,57,43,.25); }
+    .hc-grad      { background: #1a1505; border: 0.5px solid rgba(245,200,66,.25); }
+
+    /* ════ STATS ════ */
+    .stats { border-top: var(--border); border-bottom: var(--border); }
+    .stats-inner {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .stat {
+      padding: 48px 24px;
+      text-align: center;
+      border-right: var(--border);
+      transition: background .2s;
+    }
+    .stat:last-child { border-right: none; }
+    .stat:hover { background: rgba(217,119,87,.04); }
+    .stat-num {
+      font-family: var(--fd);
+      font-size: clamp(28px, 5vw, 64px);
+      font-weight: 300;
+      color: var(--orange);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-lbl { font-size: 13px; color: var(--n400); }
+
+    /* ════ CATALOG ════ */
+    .catalog { padding: 96px 0; }
+    .catalog-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 48px;
+    }
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .ccard {
+      position: relative;
+      border-radius: var(--r);
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 24px;
+      cursor: pointer;
+      transition: transform .3s cubic-bezier(.2,.8,.3,1);
+    }
+    .ccard:hover { transform: translateY(-6px); }
+    .ccard:active { transform: scale(.97); }
+    .ccard-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 55%);
+      transition: opacity .3s;
+    }
+    .ccard:hover .ccard-overlay { opacity: .85; }
+    .ccard-icon {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 90px;
+      opacity: .12;
+      user-select: none; pointer-events: none;
+      transition: opacity .3s, font-size .3s;
+    }
+    .ccard:hover .ccard-icon { opacity: .22; font-size: 100px; }
+    .ccard-body { position: relative; z-index: 1; }
+    .ccard-tag {
+      display: inline-block;
+      font-family: var(--fm);
+      font-size: 9px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 1px;
+      margin-bottom: 10px;
+    }
+    .ccard-name {
+      font-family: var(--fd);
+      font-size: 26px;
+      font-weight: 300;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .ccard-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,.85);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+    .ccard-cta-row { position: relative; display: inline-block; }
+    .ccard-cta {
+      font-family: var(--fm);
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.5);
+      border-bottom: 0.5px solid rgba(255,255,255,.2);
+      padding-bottom: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .18s, gap .18s, opacity .22s ease, transform .22s ease;
+    }
+    .ccard:hover .ccard-cta { opacity: 0; transform: translateY(-5px); }
+    .ccard-upcoming {
+      position: absolute;
+      bottom: 0; left: 0;
+      font-family: var(--fd);
+      font-size: 28px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--orange);
+      white-space: nowrap;
+      line-height: 1;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .25s ease, transform .25s ease;
+      pointer-events: none;
+    }
+    .ccard:hover .ccard-upcoming { opacity: 1; transform: translateY(0); }
+
+    .cc-halloween { background: #140a08; border: 0.5px solid rgba(232,93,36,.3); }
+    .cc-halloween .ccard-tag { background: #f2c9b8; color: #a84e2e; }
+    .cc-christmas { background: #060d06; border: 0.5px solid rgba(178,34,34,.3); }
+    .cc-christmas .ccard-tag { background: #c8e0c8; color: #2D6A2D; }
+    .cc-valentine { background: #1a0808; border: 0.5px solid rgba(192,57,43,.3); }
+    .cc-valentine .ccard-tag { background: #f7dfe8; color: #8f3558; }
+    .cc-grad      { background: #1a1505; border: 0.5px solid rgba(245,200,66,.3); }
+    .cc-grad .ccard-tag      { background: #f7ecd0; color: #8f6a18; }
+    .cc-newyear   { background: #0a0a0f; border: 0.5px solid rgba(201,169,110,.3); }
+    .cc-newyear .ccard-tag   { background: #f4f3f0; color: #68686a; }
+    .cc-material  { background: #0d0d0d; border: 0.5px solid rgba(217,119,87,.3); }
+    .cc-material .ccard-tag  { background: #f0ede4; color: #7a7870; }
+
+    /* ════ MARQUEE STRIP ════ */
+    .marquee-strip {
+      border-top: var(--border);
+      border-bottom: var(--border);
+      overflow: hidden;
+      padding: 14px 0;
+      background: #0e0e0d;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      animation: marquee 30s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-item {
+      font-family: var(--fm);
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--n800);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .marquee-dot {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--orange);
+      flex-shrink: 0;
+    }
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ════ SOCIAL SECTION ════ */
+    .social-section { padding: 96px 0; border-top: var(--border); }
+    .social-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 48px;
+    }
+    .scard {
+      background: #1a1917;
+      border: var(--border);
+      border-radius: var(--r);
+      padding: 28px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color .2s, transform .2s, background .2s;
+      cursor: pointer;
+    }
+    .scard:hover { border-color: var(--n600); transform: translateY(-3px); background: #1e1d1b; }
+    .scard:active { opacity: .8; transform: scale(.98); }
+    .scard-icon {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .scard-platform {
+      font-family: var(--fm);
+      font-size: 9px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--n600);
+    }
+    .scard-handle {
+      font-family: var(--fd);
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--light);
+    }
+    .scard-desc { font-size: 12px; color: var(--n600); line-height: 1.6; }
+    .scard-cta {
+      font-family: var(--fm);
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--n400);
+      border-bottom: 0.5px solid var(--n800);
+      padding-bottom: 2px;
+      align-self: flex-start;
+      margin-top: auto;
+      transition: color .18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .scard:hover .scard-cta { color: var(--light); }
+
+    /* ════ FOOTER ════ */
+    footer { border-top: var(--border); }
+
+    /* ─── MAP (Leaflet) ─── */
+    .fmap {
+      position: relative;
+      width: 100%; height: 280px;
+      overflow: hidden;
+      background: #0e0e0d;
+    }
+    #royraan-map { position: absolute; inset: 0; z-index: 0; }
+    .fmap-shade {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(20,20,19,.45) 0%,
+        transparent 25%,
+        transparent 75%,
+        rgba(20,20,19,.55) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .fmap-gmaps {
+      position: absolute;
+      bottom: 16px; right: 16px;
+      z-index: 10;
+      background: var(--dark);
+      border: var(--border);
+      border-radius: var(--r);
+      padding: 6px 14px;
+      font-family: var(--fm);
+      font-size: 9px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--n400);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .18s, border-color .18s;
+    }
+    .fmap-gmaps:hover { color: var(--light); border-color: var(--n600); }
+
+    /* Leaflet brand styling */
+    .leaflet-control-zoom { border: 0.5px solid #2a2826 !important; border-radius: 2px !important; }
+    .leaflet-control-zoom a { background: #141413 !important; border-bottom-color: #2a2826 !important; color: #b0aea5 !important; line-height: 28px !important; }
+    .leaflet-control-zoom a:hover { background: #1e1d1b !important; color: #faf9f5 !important; }
+    .leaflet-attribution-flag { display: none !important; }
+    .leaflet-control-attribution { background: rgba(20,20,19,.7) !important; color: #3d3a37 !important; font-size: 8px !important; }
+    .leaflet-control-attribution a { color: #3d3a37 !important; }
+
+    .footer-info { padding: 48px 0; }
+    .footer-cols {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    .footer-logo { height: 38px; margin-bottom: 14px; }
+    .footer-tagline {
+      font-family: var(--fd);
+      font-style: italic;
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--n600);
+    }
+    .footer-col-label {
+      font-family: var(--fm);
+      font-size: 9px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--n600);
+      display: block;
+      margin-bottom: 10px;
+    }
+    .footer-col-body { font-size: 13px; color: var(--n600); line-height: 1.9; }
+    .footer-copy { border-top: var(--border); padding: 14px 0; }
+    .footer-copy-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-copy p {
+      font-family: var(--fm);
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--n800);
+    }
+
+    /* ════ MODAL ════ */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(10,10,9,.85);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #1a1917;
+      border: var(--border);
+      border-radius: var(--r);
+      width: 90%; max-width: 480px;
+      padding: 40px;
+      transform: translateY(20px) scale(.97);
+      transition: transform .35s cubic-bezier(.2,.8,.3,1);
+      position: relative;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0) scale(1); }
+    .modal-close {
+      position: absolute; top: 20px; right: 20px;
+      background: none; border: none; cursor: pointer;
+      font-family: var(--fm); font-size: 10px; letter-spacing: .1em;
+      color: var(--n600); text-transform: uppercase;
+      transition: color .18s;
+    }
+    .modal-close:hover { color: var(--light); }
+    .modal-eyebrow { font-family: var(--fm); font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--n600); margin-bottom: 12px; }
+    .modal-title { font-family: var(--fd); font-size: 36px; font-weight: 300; margin-bottom: 16px; line-height: 1.1; }
+    .modal-desc { font-size: 13px; color: var(--n400); line-height: 1.8; margin-bottom: 28px; }
+    .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .modal-icon { font-size: 56px; margin-bottom: 20px; }
+    .modal-upcoming-badge {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      border: 0.5px solid var(--orange);
+      border-radius: var(--r);
+      font-family: var(--fd);
+      font-size: 26px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--orange);
+      align-self: flex-start;
+    }
+    .modal-upcoming-badge.show { display: inline-flex; }
+    .modal-upcoming-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); opacity: .5; flex-shrink: 0; }
+
+    /* ════ MOBILE MENU ════ */
+    .mobile-menu {
+      position: fixed;
+      inset: 64px 0 0;
+      background: var(--dark);
+      border-top: var(--border);
+      z-index: 98;
+      display: flex; flex-direction: column;
+      align-items: flex-start;
+      padding: 40px 24px;
+      gap: 28px;
+      transform: translateX(100%);
+      transition: transform .3s cubic-bezier(.2,.8,.3,1);
+    }
+    .mobile-menu.open { transform: translateX(0); }
+    .mobile-menu .nav-link { font-size: 13px; letter-spacing: .12em; }
+    .mobile-menu .btn { width: 100%; justify-content: center; }
+
+    /* ════ STICKY CTA (mobile only) ════ */
+    .sticky-cta {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(20,20,19,0.97);
+      border-top: var(--border);
+      padding: 10px 16px;
+      z-index: 99;
+      gap: 8px;
+      backdrop-filter: blur(12px);
+    }
+    .sticky-cta .btn { flex: 1; font-size: 12px; padding: 11px 12px; }
+
+    /* ════ RESPONSIVE ════ */
+
+    /* Tablet */
+    @media (max-width: 1024px) {
+      .social-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-h1 { font-size: clamp(53px, 6.6vw, 84px); }
+    }
+
+    /* Mobile / Tablet */
+    @media (max-width: 768px) {
+      body { padding-bottom: 72px; }
+
+      /* Header */
+      nav { display: none; }
+      .nav-header-cta { display: none; }
+      .hamburger { display: flex; }
+      .header-inner { height: 56px; padding: 0 16px; }
+      .logo-img { height: 28px; }
+      .mobile-menu { inset: 56px 0 0; }
+
+      /* Sticky CTA */
+      .sticky-cta { display: flex; }
+
+      /* Hero */
+      .hero { padding: 32px 0 28px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 32px; }
+      .hero-grid { aspect-ratio: auto; }
+      .hcard { min-height: 120px; }
+      .hcard-icon { font-size: 52px; }
+      .hcard-name { font-size: 18px; }
+      .hero-h1 { font-size: 62px; line-height: 1.05; }
+      .hero-sub { font-size: 13px; }
+      .hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .hero-eyebrow { margin-bottom: 16px; }
+
+      /* Stats */
+      .stats-inner { grid-template-columns: repeat(3, 1fr); }
+      .stat { padding: 24px 12px; border-right: var(--border); border-bottom: none; }
+      .stat:last-child { border-right: none; }
+      .stat-num { font-size: 28px; }
+      .stat-lbl { font-size: 10px; line-height: 1.4; }
+
+      /* Catalog */
+      .catalog { padding: 40px 0; }
+      .catalog-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .catalog-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+      .section-eyebrow { margin-bottom: 10px; }
+      .section-title { font-size: 28px; }
+      .ccard { padding: 14px; }
+      .ccard-name { font-size: 20px; }
+      .ccard-desc { font-size: 10px; margin-bottom: 10px; line-height: 1.5; }
+      .ccard-tag { font-size: 8px; padding: 2px 6px; margin-bottom: 6px; }
+      .ccard-icon { font-size: 64px; }
+      .ccard-upcoming { font-size: 22px; }
+
+      /* Social */
+      .social-section { padding: 40px 0; }
+      .social-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 24px; }
+      .scard { padding: 18px 14px; gap: 8px; }
+      .scard-icon { width: 28px; height: 28px; }
+      .scard-handle { font-size: 16px; }
+      .scard-desc { font-size: 11px; }
+      .scard-cta { font-size: 8px; }
+
+      /* Footer */
+      .fmap { height: 180px; }
+      .fmap-gmaps { bottom: 10px; right: 10px; padding: 5px 10px; font-size: 8px; }
+      .footer-info { padding: 28px 0; }
+      .footer-cols { grid-template-columns: 1fr 1fr; gap: 20px; }
+      .footer-logo { height: 30px; }
+      .footer-tagline { font-size: 13px; margin-bottom: 20px; }
+      .footer-col-label { font-size: 8px; margin-bottom: 6px; }
+      .footer-col-body { font-size: 12px; }
+
+      /* Modal: bottom sheet on mobile */
+      .modal-backdrop { align-items: flex-end; }
+      .modal {
+        width: 100%;
+        max-width: 100%;
+        border-radius: var(--r) var(--r) 0 0;
+        padding: 28px 20px 32px;
+        transform: translateY(30px);
+      }
+      .modal-backdrop.open .modal { transform: translateY(0) scale(1); }
+      .modal-title { font-size: 28px; }
+      .modal-icon { font-size: 40px; margin-bottom: 12px; }
+      .modal-desc { font-size: 12px; margin-bottom: 20px; }
+      .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .modal-upcoming-badge { font-size: 22px; padding: 10px 20px; }
+
+      /* Mono / utility */
+      .mono { font-size: 9px; }
+      .wrap { padding: 0 16px; }
+    }
+
+    /* Small mobile */
+    @media (max-width: 480px) {
+      .catalog-grid { grid-template-columns: 1fr; }
+      .hero-actions { grid-template-columns: 1fr 1fr; }
+      .social-grid { grid-template-columns: 1fr 1fr; }
+
+      /* Stack stats vertically on very small screens */
+      .stats-inner { grid-template-columns: 1fr; }
+      .stat { border-right: none; border-bottom: var(--border); }
+      .stat:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header id="site-header">
+    <div class="header-inner">
+      <a href="/">
+        <img src="Brand Assets/Logo Transpaerent 2.png" alt="ROYRAAN" class="logo-img" style="height:34px;width:auto;object-fit:contain;">
+      </a>
+      <nav id="main-nav">
+        <a href="#catalog" class="nav-link">Catalog</a>
+        <a href="#catalog" class="nav-link">เทศกาล</a>
+        <a href="#contact" class="nav-link">เกี่ยวกับ</a>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+          <span id="theme-icon">☀</span><span id="theme-label">Light</span>
+        </button>
+        <a href="#contact" class="btn btn-accent nav-header-cta" style="padding:9px 20px;font-size:12px;">ติดต่อ LINE</a>
+      </nav>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="theme-toggle" id="theme-toggle-mobile" aria-label="Toggle theme" style="display:none;">
+          <span id="theme-icon-mobile">☀</span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#catalog" class="nav-link">Catalog</a>
+    <a href="#catalog" class="nav-link">เทศกาล</a>
+    <a href="#contact" class="nav-link">เกี่ยวกับ</a>
+    <a href="#contact" class="btn btn-accent" style="margin-top:8px;">ติดต่อ LINE</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-inner">
+        <div>
+          <p class="mono hero-eyebrow reveal">Seasonal Decoration Wholesale · Thailand</p>
+          <h1 class="hero-h1 reveal reveal-delay-1">
+            You dream it,<br>
+            <span class="accent">We make it</span>
+            <span class="hero-thai-sub">ของตกแต่งทุกเทศกาล <span style="color:var(--orange);">ส่งทั่วไทย</span></span>
+          </h1>
+          <p class="hero-sub reveal reveal-delay-2">
+            ราคาส่ง และ ปลีก<br>
+            ของตกแต่งเทศกาลครบวงจร สำหรับ ลูกค้าใช้เอง ร้านค้า ร้านอาหาร และ event organizer
+          </p>
+          <div class="hero-actions reveal reveal-delay-3">
+            <a href="#catalog" class="btn btn-accent">ดู Catalog</a>
+            <a href="#contact" class="btn btn-outline">ติดต่อสั่งซื้อ</a>
+          </div>
+        </div>
+        <div class="hero-grid reveal reveal-delay-2">
+          <div class="hcard hc-halloween" data-modal="halloween">
+            <div class="hcard-icon">🎃</div>
+            <p class="hcard-season">Season 01</p>
+            <p class="hcard-name">Halloween</p>
+          </div>
+          <div class="hcard hc-christmas" data-modal="christmas">
+            <div class="hcard-icon">🎄</div>
+            <p class="hcard-season">Season 02</p>
+            <p class="hcard-name">Christmas</p>
+          </div>
+          <div class="hcard hc-valentine" data-modal="valentine">
+            <div class="hcard-icon">🌹</div>
+            <p class="hcard-season">Season 03</p>
+            <p class="hcard-name">Valentine</p>
+          </div>
+          <div class="hcard hc-grad" data-modal="grad">
+            <div class="hcard-icon">🎓</div>
+            <p class="hcard-season">Season 04</p>
+            <p class="hcard-name">งานปัจฉิม</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="wrap">
+      <div class="stats-inner">
+        <div class="stat reveal">
+          <div class="stat-num" style="font-size:clamp(22px,4vw,50px);font-family:Sarabun;">ส่งทั่วประเทศ</div>
+          <div class="stat-lbl">ลูกค้าเลือกวิธีส่งได้อย่างอิสระ</div>
+        </div>
+        <div class="stat reveal reveal-delay-2">
+          <div class="stat-num" data-count="6">0</div>
+          <div class="stat-lbl">เทศกาลหลัก ครอบคลุมทุกฤดูกาล</div>
+        </div>
+        <div class="stat reveal reveal-delay-4">
+          <div class="stat-num" style="font-size:clamp(18px,3.5vw,50px);font-family:Sarabun;">ขายปลีกและส่ง</div>
+          <div class="stat-lbl" style="font-family:Sarabun;">&nbsp;</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-strip">
+    <div class="marquee-track" id="marquee">
+      <span class="marquee-item" style="color:rgb(176,174,165)">Halloween <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">Christmas <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">Valentine <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">งานปัจฉิม <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">New Year <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">วัตถุดิบ <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">Seasonal Decoration Wholesale <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">Bangkok, Thailand <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">Halloween <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">Christmas <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">Valentine <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">งานปัจฉิม <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">New Year <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">วัตถุดิบ <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">Seasonal Decoration Wholesale <span class="marquee-dot"></span></span>
+      <span class="marquee-item" style="color:rgb(176,174,165)">Bangkok, Thailand <span class="marquee-dot"></span></span>
+    </div>
+  </div>
+
+  <!-- CATALOG -->
+  <section class="catalog" id="catalog">
+    <div class="wrap">
+      <div class="catalog-header">
+        <div>
+          <p class="mono section-eyebrow reveal">Our Collection</p>
+          <h2 class="section-title reveal reveal-delay-1">Catalog สินค้า</h2>
+        </div>
+        <p class="mono reveal reveal-delay-2" style="color:rgb(176,174,165);">6 เทศกาล · มากกว่า 2,000+ SKU</p>
+      </div>
+      <div class="catalog-grid">
+        <a href="#" class="ccard cc-halloween reveal" data-modal="halloween">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-icon">🎃</div>
+          <div class="ccard-body">
+            <span class="ccard-tag">Halloween</span>
+            <h3 class="ccard-name">Halloween</h3>
+            <p class="ccard-desc">ฟักทอง · แมงมุม · กระดูก · ของตกแต่งสยองขวัญ</p>
+            <div class="ccard-cta-row">
+              <span class="ccard-cta">ดู Catalog →</span>
+              <span class="ccard-upcoming">Upcoming</span>
+            </div>
+          </div>
+        </a>
+        <a href="#" class="ccard cc-christmas reveal reveal-delay-1" data-modal="christmas">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-icon">🎄</div>
+          <div class="ccard-body">
+            <span class="ccard-tag">Christmas</span>
+            <h3 class="ccard-name">Christmas</h3>
+            <p class="ccard-desc">ต้นคริสต์มาส · ลูกโลก · ริบบิ้น · หิมะเทียม</p>
+            <div class="ccard-cta-row">
+              <span class="ccard-cta">ดู Catalog →</span>
+              <span class="ccard-upcoming">Upcoming</span>
+            </div>
+          </div>
+        </a>
+        <a href="#" class="ccard cc-valentine reveal reveal-delay-2" data-modal="valentine">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-icon">🌹</div>
+          <div class="ccard-body">
+            <span class="ccard-tag">Valentine</span>
+            <h3 class="ccard-name">Valentine</h3>
+            <p class="ccard-desc">หัวใจ · ดอกไม้ · ริบบิ้น · บอลลูนวาเลนไทน์</p>
+            <div class="ccard-cta-row">
+              <span class="ccard-cta">ดู Catalog →</span>
+              <span class="ccard-upcoming">Upcoming</span>
+            </div>
+          </div>
+        </a>
+        <a href="#" class="ccard cc-grad reveal reveal-delay-1" data-modal="grad">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-icon">🎓</div>
+          <div class="ccard-body">
+            <span class="ccard-tag">งานปัจฉิม</span>
+            <h3 class="ccard-name">งานปัจฉิม</h3>
+            <p class="ccard-desc">ฉากถ่ายรูป · โบว์ · ช่อดอกไม้ · ของที่ระลึก</p>
+            <div class="ccard-cta-row">
+              <span class="ccard-cta">ดู Catalog →</span>
+              <span class="ccard-upcoming">Upcoming</span>
+            </div>
+          </div>
+        </a>
+        <a href="#" class="ccard cc-newyear reveal reveal-delay-2" data-modal="newyear">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-icon">🎆</div>
+          <div class="ccard-body">
+            <span class="ccard-tag">New Year</span>
+            <h3 class="ccard-name">New Year</h3>
+            <p class="ccard-desc">ดาว · แชมเปญ · บอลลูนปีใหม่ · ของตกแต่งฉลอง</p>
+            <div class="ccard-cta-row">
+              <span class="ccard-cta">ดู Catalog →</span>
+              <span class="ccard-upcoming">Upcoming</span>
+            </div>
+          </div>
+        </a>
+        <a href="#" class="ccard cc-material reveal reveal-delay-3" data-modal="material">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-icon">🎀</div>
+          <div class="ccard-body">
+            <span class="ccard-tag">วัตถุดิบ</span>
+            <h3 class="ccard-name">วัตถุดิบ</h3>
+            <p class="ccard-desc">ริบบิ้น · ดอกไม้ปลอม · ลวด · วัสดุตกแต่งพื้นฐาน</p>
+            <div class="ccard-cta-row">
+              <span class="ccard-cta">ดู Catalog →</span>
+              <span class="ccard-upcoming">Upcoming</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIAL / CONTACT -->
+  <section class="social-section" id="contact">
+    <div class="wrap">
+      <p class="mono section-eyebrow reveal">Contact & Social</p>
+      <h2 class="section-title reveal reveal-delay-1">ติดต่อและติดตาม</h2>
+      <div class="social-grid">
+        <a href="#" class="scard reveal reveal-delay-1">
+          <div class="scard-icon" style="background:#00B900;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+          </div>
+          <span class="scard-platform">LINE OA</span>
+          <span class="scard-handle">@royraan</span>
+          <p class="scard-desc">สั่งซื้อ B2B · สอบถามราคาส่ง · แคตตาล็อกสินค้า</p>
+          <span class="scard-cta">เพิ่มเพื่อน →</span>
+        </a>
+        <a href="#" class="scard reveal reveal-delay-2">
+          <div class="scard-icon" style="background:#1877F2;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </div>
+          <span class="scard-platform">Facebook</span>
+          <span class="scard-handle">ร้านร้อยร้าน RaanRoyraan</span>
+          <p class="scard-desc">อัปเดตสินค้าใหม่ · โปรโมชั่น · ของตกแต่งเทศกาล</p>
+          <span class="scard-cta">ติดตาม →</span>
+        </a>
+        <a href="#" class="scard reveal reveal-delay-3">
+          <div class="scard-icon" style="background:#010101;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+          </div>
+          <span class="scard-platform">TikTok</span>
+          <span class="scard-handle">@royraan.str</span>
+          <p class="scard-desc">Content เบื้องหลัง · ไอเดียตกแต่ง · Trend เทศกาล</p>
+          <span class="scard-cta">ดูวิดีโอ →</span>
+        </a>
+        <a href="#" class="scard reveal reveal-delay-4">
+          <div class="scard-icon" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </div>
+          <span class="scard-platform">Instagram</span>
+          <span class="scard-handle">@royraanofficial</span>
+          <p class="scard-desc">Brand Image · ภาพสินค้า · แรงบันดาลใจการตกแต่ง</p>
+          <span class="scard-cta">ติดตาม →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="fmap">
+      <div id="royraan-map"></div>
+      <div class="fmap-shade"></div>
+      <a href="https://maps.app.goo.gl/ufhN4r1PfNr4kjFU7" target="_blank" rel="noopener noreferrer" class="fmap-gmaps">Open in Google Maps ↗</a>
+    </div>
+    <div class="footer-info">
+      <div class="wrap">
+        <div class="footer-cols">
+          <div>
+            <img src="Brand Assets/Logo Transpaerent 2.png" alt="ROYRAAN" class="footer-logo" style="height:38px;width:auto;object-fit:contain;margin-bottom:14px;">
+            <p class="footer-tagline">"You dream it, we serve it"</p>
+          </div>
+          <div>
+            <span class="footer-col-label">ที่อยู่</span>
+            <p class="footer-col-body">100 ซ. วานิช 1 แขวงจักรวรรดิ์<br>เขตสัมพันธวงศ์ กรุงเทพมหานคร<br>Bangkok, Thailand</p>
+          </div>
+          <div>
+            <span class="footer-col-label">เวลาทำการ</span>
+            <p class="footer-col-body">จันทร์ : 08:00–18:00<br>อังคาร – อาทิตย์<br>06:00 – 18:00 น.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copy">
+      <div class="footer-copy-inner">
+        <p style="color:rgb(61,58,55);">ROYRAAN · Seasonal Decoration Wholesale</p>
+        <p>Bangkok · Thailand</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- STICKY CTA (mobile only) -->
+  <div class="sticky-cta">
+    <a href="#contact" class="btn btn-accent">ติดต่อ LINE</a>
+    <a href="#catalog" class="btn btn-outline">ดู Catalog</a>
+  </div>
+
+  <!-- CATALOG MODAL -->
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal" id="modal-content">
+      <button class="modal-close" id="modal-close">✕ ปิด</button>
+      <div class="modal-icon" id="modal-icon"></div>
+      <p class="modal-eyebrow" id="modal-eyebrow"></p>
+      <h2 class="modal-title" id="modal-title"></h2>
+      <p class="modal-desc" id="modal-desc"></p>
+      <div class="modal-actions" id="modal-actions">
+        <a href="#" class="btn btn-accent" id="modal-cta-primary">ดู Catalog</a>
+        <a href="#contact" class="btn btn-outline" id="modal-cta-secondary">ติดต่อสั่งซื้อ</a>
+      </div>
+      <div class="modal-upcoming-badge" id="modal-upcoming">
+        <span class="modal-upcoming-dot"></span>
+        Upcoming
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── Theme toggle (desktop + mobile sync) ── */
+    let isLight = false;
+    function applyTheme() {
+      document.body.classList.toggle('light-mode', isLight);
+      const icon  = isLight ? '☾' : '☀';
+      const label = isLight ? 'Dark' : 'Light';
+      document.getElementById('theme-icon').textContent = icon;
+      document.getElementById('theme-label').textContent = label;
+      const mi = document.getElementById('theme-icon-mobile');
+      if (mi) mi.textContent = icon;
+    }
+    document.getElementById('theme-toggle').addEventListener('click', () => { isLight = !isLight; applyTheme(); });
+    const mobileToggle = document.getElementById('theme-toggle-mobile');
+    if (mobileToggle) mobileToggle.addEventListener('click', () => { isLight = !isLight; applyTheme(); });
+
+    /* ── Show/hide mobile theme toggle based on viewport ── */
+    function syncHeaderControls() {
+      const isMobile = window.innerWidth <= 768;
+      if (mobileToggle) mobileToggle.style.display = isMobile ? 'flex' : 'none';
+    }
+    syncHeaderControls();
+    window.addEventListener('resize', syncHeaderControls);
+
+    /* ── Scroll: header state ── */
+    const header = document.getElementById('site-header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 10);
+    });
+
+    /* ── Hamburger + mobile menu ── */
+    const ham = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    ham.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('open');
+      ham.classList.toggle('open', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+    mobileMenu.querySelectorAll('a').forEach(l => {
+      l.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        ham.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    /* ── Reveal animations ── */
+    const allReveals = document.querySelectorAll('.reveal');
+    allReveals.forEach(el => el.classList.add('visible'));
+    allReveals.forEach(el => {
+      if (el.getBoundingClientRect().top > window.innerHeight) el.classList.remove('visible');
+    });
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); }
+      });
+    }, { threshold: 0 });
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => revealObserver.observe(el));
+
+    /* ── Animated counters ── */
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const target = parseInt(el.dataset.count);
+        if (!target) return;
+        counterObserver.unobserve(el);
+        const start = performance.now();
+        const animate = (now) => {
+          const progress = Math.min((now - start) / 1400, 1);
+          const ease = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(ease * target);
+          if (progress < 1) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
+
+    /* ── Catalog modal data ── */
+    const modalData = {
+      halloween: { icon: '🎃', eyebrow: 'Season 01 · Halloween', title: 'Halloween', desc: 'ของตกแต่งสยองขวัญครบครัน ฟักทอง แมงมุม กระดูก และอีกกว่า 300 SKU สำหรับร้านค้า event organizer และ florist' },
+      christmas: { icon: '🎄', eyebrow: 'Season 02 · Christmas', title: 'Christmas', desc: 'ต้นคริสต์มาส ลูกโลก ริบบิ้น หิมะเทียม และของตกแต่งช่วงเทศกาลครบวงจร กว่า 500 SKU' },
+      valentine: { icon: '🌹', eyebrow: 'Season 03 · Valentine', title: 'Valentine', desc: 'หัวใจ ดอกไม้ ริบบิ้น บอลลูนวาเลนไทน์ และของตกแต่งแห่งความรัก สำหรับทั้ง B2B และ B2C' },
+      grad:      { icon: '🎓', eyebrow: 'Season 04 · งานปัจฉิม', title: 'งานปัจฉิม', desc: 'ฉากถ่ายรูป โบว์ ช่อดอกไม้ ของที่ระลึก และของตกแต่งสำหรับงานรับปริญญาและปัจฉิมนิเทศ' },
+      newyear:   { icon: '🎆', eyebrow: 'Season 05 · New Year', title: 'New Year', desc: 'ดาว แชมเปญ บอลลูนปีใหม่ และของตกแต่งงานฉลองต้อนรับปีใหม่ ครบทุก style' },
+      material:  { icon: '🎀', eyebrow: 'วัตถุดิบ · Craft Supplies', title: 'วัตถุดิบ', desc: 'ริบบิ้น ดอกไม้ปลอม ลวด และวัสดุตกแต่งพื้นฐานสำหรับ florist และผู้ทำงานด้าน event' },
+    };
+
+    const backdrop = document.getElementById('modal-backdrop');
+    const modalClose = document.getElementById('modal-close');
+
+    function openModal(key) {
+      const d = modalData[key];
+      if (!d) return;
+      document.getElementById('modal-icon').textContent = d.icon;
+      document.getElementById('modal-eyebrow').textContent = d.eyebrow;
+      document.getElementById('modal-title').textContent = d.title;
+      document.getElementById('modal-desc').textContent = d.desc;
+      const actions  = document.getElementById('modal-actions');
+      const upcoming = document.getElementById('modal-upcoming');
+      if (d.hasLink) {
+        actions.style.display = '';
+        upcoming.classList.remove('show');
+      } else {
+        actions.style.display = 'none';
+        upcoming.classList.add('show');
+      }
+      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('[data-modal]').forEach(el => {
+      el.addEventListener('click', (e) => { e.preventDefault(); openModal(el.dataset.modal); });
+    });
+    modalClose.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+  </script>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    (function () {
+      const map = L.map('royraan-map', {
+        center: [13.7429116, 100.5041848],
+        zoom: 16,
+        zoomControl: true,
+        scrollWheelZoom: false,
+        attributionControl: true,
+      });
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd',
+        maxZoom: 20,
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/">CARTO</a>',
+      }).addTo(map);
+
+      const pinIcon = L.divIcon({
+        html: `<div style="width:14px;height:14px;background:#d97757;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #141413;box-shadow:0 0 0 4px rgba(217,119,87,.35);"></div>`,
+        iconSize: [14, 14],
+        iconAnchor: [7, 14],
+        className: '',
+      });
+
+      L.marker([13.7429116, 100.5041848], { icon: pinIcon })
+        .bindPopup(`<div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:15px;color:#141413;line-height:1.5;"><strong>ROYRAAN</strong><br><span style="font-size:11px;color:#7a7870;">100 ซ.วานิช 1 สัมพันธวงศ์ กรุงเทพฯ</span></div>`)
+        .addTo(map);
+
+      map.on('click', () => map.scrollWheelZoom.enable());
+      map.getContainer().addEventListener('mouseleave', () => map.scrollWheelZoom.disable());
+    })();
+  </script>
+
+</body>
+</html>
