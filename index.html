@@ -42,7 +42,7 @@
     body.light-mode header { background: rgba(250,249,245,0.92); }
     body.light-mode header.scrolled { background: rgba(250,249,245,0.98); }
     body.light-mode .marquee-strip { background: #e8e5dc; }
-    body.light-mode .marquee-item { color: #5a5852; }
+    body.light-mode .marquee-item { color: #3d3a37; }
     body.light-mode .scard { background: #f0ede4; }
     body.light-mode .modal { background: #f0ede4; }
     body.light-mode .mobile-menu { background: #faf9f5; }
@@ -60,25 +60,91 @@
     .footer-logo { filter: invert(1); }
     body.light-mode .footer-logo { filter: none; }
 
-    /* ─── THEME TOGGLE ─── */
-    .theme-toggle {
-      background: none;
-      border: 0.5px solid var(--n800);
+    /* ─── FLOATING NAV ─── */
+    .floating-nav {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+    }
+    .floating-hamburger {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 200;
+      flex-direction: column;
+      gap: 5px;
+      background: rgba(20,20,19,0.82);
+      border: 0.5px solid rgba(255,255,255,0.22);
       border-radius: var(--r);
-      color: var(--n400);
-      font-family: var(--fm);
-      font-size: 10px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      padding: 6px 12px;
       cursor: pointer;
+      padding: 10px;
+      backdrop-filter: blur(12px);
+    }
+    body.light-mode .floating-hamburger { background: rgba(250,249,245,0.88); border-color: rgba(0,0,0,0.2); }
+    .floating-hamburger span {
+      display: block;
+      width: 20px;
+      height: 0.5px;
+      background: var(--light);
+      transition: transform .25s, opacity .25s;
+    }
+    .floating-hamburger.open span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+    .floating-hamburger.open span:nth-child(2) { opacity: 0; }
+    .floating-hamburger.open span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+
+    /* ─── THEME SWITCH WIDGET ─── */
+    .theme-switch-widget {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 200;
       display: flex;
       align-items: center;
-      gap: 6px;
-      transition: color .18s, border-color .18s;
-      white-space: nowrap;
+      gap: 8px;
+      background: rgba(20,20,19,0.82);
+      border: 0.5px solid rgba(255,255,255,0.22);
+      border-radius: 100px;
+      padding: 8px 14px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
-    .theme-toggle:hover { color: var(--light); border-color: var(--n600); }
+    body.light-mode .theme-switch-widget { background: rgba(250,249,245,0.88); border-color: rgba(0,0,0,0.2); }
+    .theme-switch-icon {
+      display: flex;
+      align-items: center;
+      color: rgba(255,255,255,0.45);
+      cursor: pointer;
+      transition: color .18s;
+    }
+    body.light-mode .theme-switch-icon { color: rgba(0,0,0,0.35); }
+    .theme-switch-icon.active { color: rgba(255,255,255,0.9); }
+    body.light-mode .theme-switch-icon.active { color: rgba(0,0,0,0.75); }
+    .theme-track {
+      position: relative;
+      width: 34px;
+      height: 19px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.18);
+      cursor: pointer;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+    body.light-mode .theme-track { background: rgba(0,0,0,0.15); }
+    .theme-track.light-on { background: var(--orange); }
+    .theme-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--n200);
+      transition: transform .22s cubic-bezier(.2,.8,.3,1);
+    }
+    .theme-track.light-on .theme-thumb { transform: translateX(15px); }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -146,32 +212,7 @@
     .btn-outline { background: transparent; color: var(--n400); border: 0.5px solid var(--n800); }
     .btn-full { width: 100%; justify-content: center; }
 
-    /* ════ HEADER ════ */
-    header {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(20,20,19,0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: var(--border);
-      transition: background .3s;
-    }
-    header.scrolled { background: rgba(20,20,19,0.98); }
-    .header-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-    .logo-img { height: 34px; width: auto; }
-
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-    }
+    /* pill-nav lives inside .floating-nav, no extra wrapper needed */
     .nav-link {
       font-family: var(--fm);
       font-size: 10px;
@@ -194,114 +235,241 @@
     .nav-link:hover { color: var(--light); }
     .nav-link:hover::after { transform: scaleX(1); }
 
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      background: none;
-      border: none;
-      cursor: pointer;
+    /* ─── PILL NAV ─── */
+    .pill-nav {
+      position: relative;
+      display: flex;
+      align-items: center;
+      list-style: none;
+      border: 0.5px solid rgba(255,255,255,0.22);
+      border-radius: 100px;
       padding: 4px;
+      background: rgba(20,20,19,0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
-    .hamburger span {
+    body.light-mode .pill-nav { background: rgba(250,249,245,0.88); border-color: rgba(0,0,0,0.2); }
+    .pill-nav li { position: relative; z-index: 1; }
+    .pill-nav li a {
       display: block;
-      width: 22px;
-      height: 0.5px;
-      background: var(--light);
-      transition: transform .25s, opacity .25s;
+      font-family: var(--fm);
+      font-size: 10px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      padding: 6px 16px;
+      white-space: nowrap;
+      transition: color .2s;
     }
-    .hamburger.open span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
-    .hamburger.open span:nth-child(2) { opacity: 0; }
-    .hamburger.open span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+    body.light-mode .pill-nav li a { color: rgba(0,0,0,0.55); }
+    .pill-nav li.hovered a { color: #fff; }
+    body.light-mode .pill-nav li.hovered a { color: #fff; }
+    .nav-cursor {
+      position: absolute;
+      top: 4px;
+      left: 0;
+      width: 0;
+      height: calc(100% - 8px);
+      border-radius: 100px;
+      background: var(--orange);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 0;
+      transition: left .22s cubic-bezier(.2,.8,.3,1),
+                  width .22s cubic-bezier(.2,.8,.3,1),
+                  opacity .15s ease;
+    }
+
+
+    /* ════ BLUR-FADE INTRO ════ */
+    @keyframes blurFadeIn {
+      from { opacity: 0; filter: blur(6px); transform: translateY(6px); }
+      to   { opacity: 1; filter: blur(0px); transform: translateY(-6px); }
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(-6px); }
+    }
+    .intro-section {
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 24px;
+    }
+    .intro-inner {
+      max-width: 900px;
+      text-align: center;
+    }
+    .intro-logo {
+      width: clamp(102px, 15.3vw, 187px);
+      height: auto;
+      margin: 0 auto 32px;
+      display: block;
+      opacity: 0;
+      animation: fadeSlideIn 0.4s ease-out 0.1s forwards;
+    }
+    .intro-h2 {
+      font-family: var(--fd);
+      font-size: clamp(42px, 8vw, 96px);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      color: var(--light);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: blurFadeIn 0.4s ease-out 0.29s forwards;
+    }
+    .intro-sub {
+      font-family: var(--fd);
+      font-size: clamp(22px, 4vw, 48px);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--orange);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      opacity: 0;
+      animation: blurFadeIn 0.4s ease-out 0.54s forwards;
+    }
 
     /* ════ HERO ════ */
-    .hero { padding: 96px 0 80px; overflow: hidden; }
-    .hero-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 38vh;
+    }
+    .hero-center {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
       align-items: center;
     }
-    .hero-eyebrow { margin-bottom: 24px; }
+    .hero-pill {
+      display: inline-block;
+      border-radius: 9999px;
+      border: 0.5px solid rgba(255,255,255,0.15);
+      background: rgba(20,20,19,0.5);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 5px 16px;
+      font-family: var(--fm);
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--n400);
+      margin-bottom: 24px;
+      opacity: 0;
+    }
+    body.light-mode .hero-pill { background: rgba(250,249,245,0.6); border-color: rgba(0,0,0,0.12); }
+    .hero-pill.revealed   { animation: blurFadeIn 0.5s ease-out 0s      forwards; }
     .hero-h1 {
       font-family: var(--fd);
-      font-size: clamp(58px, 7.2vw, 101px);
+      font-size: clamp(52px, 7vw, 96px);
       font-weight: 300;
       line-height: 1.05;
+      letter-spacing: -0.03em;
       margin-bottom: 24px;
+      opacity: 0;
     }
+    .hero-h1.revealed     { animation: blurFadeIn 0.5s ease-out 0.12s   forwards; }
     .hero-h1 .accent { font-style: italic; color: var(--orange); }
     .hero-h1 .hero-thai-sub {
       display: block;
       font-family: var(--fb);
-      font-size: clamp(15px, 1.6vw, 21px);
+      font-size: clamp(14px, 1.5vw, 19px);
       font-style: normal;
       font-weight: 400;
-      color: var(--light);
+      color: var(--n400);
       line-height: 1.6;
       margin-top: 10px;
       letter-spacing: 0;
     }
     .hero-sub {
+      max-width: 480px;
       font-size: 14px;
       color: var(--n400);
-      margin-bottom: 32px;
       line-height: 1.8;
+      margin-bottom: 32px;
+      opacity: 0;
     }
+    .hero-sub.revealed    { animation: blurFadeIn 0.5s ease-out 0.26s   forwards; }
     .hero-sub strong { color: var(--light); font-weight: 500; }
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-
-    /* 2×2 hero grid */
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      aspect-ratio: 1;
-    }
-    .hcard {
-      position: relative;
-      border-radius: var(--r);
-      overflow: hidden;
+    .hero-actions {
       display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 16px;
-      min-height: 180px;
-      cursor: pointer;
-      transition: transform .3s ease;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
     }
-    .hcard:hover { transform: scale(1.02); }
-    .hcard:active { transform: scale(.97); }
-    .hcard-icon {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 72px;
-      opacity: .18;
+    .hero-actions.revealed { animation: blurFadeIn 0.5s ease-out 0.38s  forwards; }
+
+    /* ── Rotating word ── */
+    .hero-rotate-wrap {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+      padding: 0.05em 0.2em 0.1em;
+      margin: -0.05em -0.2em -0.1em;
+    }
+    .hero-rotate-inner {
+      display: inline-block;
+      transition: transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1),
+                  opacity  0.28s ease;
+    }
+    .hero-rotate-inner.exit {
+      transform: translateY(-120%);
+      opacity: 0;
+    }
+    .hero-rotate-inner.enter {
+      transform: translateY(100%);
+      opacity: 0;
+      transition: none;
+    }
+
+    /* ── Bottom image marquee ── */
+    .hero-marquee {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 38%;
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black 28%, black 78%, transparent);
+      mask-image: linear-gradient(to bottom, transparent, black 28%, black 78%, transparent);
+      overflow: hidden;
       pointer-events: none;
-      user-select: none;
-      transition: opacity .3s, font-size .3s;
+      z-index: 1;
     }
-    .hcard:hover .hcard-icon { opacity: .28; font-size: 80px; }
-    .hcard-season {
-      font-family: var(--fm);
-      font-size: 9px;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.4);
-      margin-bottom: 4px;
-      position: relative;
+    .hero-marquee-track {
+      display: flex;
+      gap: 16px;
+      width: max-content;
+      animation: marquee-h 40s linear infinite;
+      padding-top: 12px;
     }
-    .hcard-name {
-      font-family: var(--fd);
-      font-size: 22px;
-      font-weight: 300;
-      color: #fff;
-      position: relative;
+    @keyframes marquee-h {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
     }
-    .hc-halloween { background: #140a08; border: 0.5px solid rgba(232,93,36,.25); }
-    .hc-christmas { background: #060d06; border: 0.5px solid rgba(178,34,34,.25); }
-    .hc-valentine { background: #1a0808; border: 0.5px solid rgba(192,57,43,.25); }
-    .hc-grad      { background: #1a1505; border: 0.5px solid rgba(245,200,66,.25); }
+    .hero-marquee-item {
+      flex-shrink: 0;
+      height: 220px;
+      aspect-ratio: 3/4;
+    }
+    .hero-marquee-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 14px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.45);
+      display: block;
+    }
 
     /* ════ STATS ════ */
     .stats { border-top: var(--border); border-bottom: var(--border); }
@@ -314,6 +482,10 @@
       text-align: center;
       border-right: var(--border);
       transition: background .2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
     .stat:last-child { border-right: none; }
     .stat:hover { background: rgba(217,119,87,.04); }
@@ -324,6 +496,8 @@
       color: var(--orange);
       line-height: 1;
       margin-bottom: 8px;
+      text-align: center;
+      width: 100%;
     }
     .stat-lbl { font-size: 13px; color: var(--n400); }
 
@@ -342,7 +516,7 @@
     }
     .ccard {
       position: relative;
-      border-radius: var(--r);
+      border-radius: 18px;
       overflow: hidden;
       aspect-ratio: 3/4;
       display: flex;
@@ -350,12 +524,13 @@
       justify-content: flex-end;
       padding: 24px;
       cursor: pointer;
-      transition: transform .3s cubic-bezier(.2,.8,.3,1);
+      transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.18s ease;
+      will-change: transform;
     }
-    .ccard:hover { transform: translateY(-6px); }
-    .ccard:active { transform: scale(.97); }
+    .ccard:active { transform: scale(.97) !important; }
     .ccard-overlay {
       position: absolute; inset: 0;
+      z-index: 1;
       background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 55%);
       transition: opacity .3s;
     }
@@ -425,17 +600,38 @@
     }
     .ccard:hover .ccard-upcoming { opacity: 1; transform: translateY(0); }
 
-    .cc-halloween { background: #140a08; border: 0.5px solid rgba(232,93,36,.3); }
+    /* card solid-colour fallbacks */
+    .cc-halloween { background: #140a08; }
+    .cc-christmas { background: #060d06; }
+    .cc-valentine { background: #1a0808; }
+    .cc-cny       { background: #1a0303; }
+    .cc-newyear   { background: #0a0a0f; }
+    .cc-material  { background: #0d0d0d; }
+
+    /* card background images on ::before for zoom */
+    .ccard::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.3, 1);
+    }
+    .ccard:hover::before { transform: scale(1.08); }
+    .cc-halloween::before { background-image: url('Card Image/halloween.JPG'); }
+    .cc-christmas::before { background-image: url('Card Image/christmas.JPG'); }
+    .cc-valentine::before { background-image: url('Card Image/valentine.jpg'); }
+    .cc-cny::before       { background-image: url('Card Image/chinesenewyear.jpg'); }
+    .cc-newyear::before   { background-image: url('Card Image/happynewyear.JPG'); }
+    .cc-material::before  { background-image: url('Card Image/ปัจฉิม.jpg'); }
+
+    /* tag colours */
     .cc-halloween .ccard-tag { background: #f2c9b8; color: #a84e2e; }
-    .cc-christmas { background: #060d06; border: 0.5px solid rgba(178,34,34,.3); }
     .cc-christmas .ccard-tag { background: #c8e0c8; color: #2D6A2D; }
-    .cc-valentine { background: #1a0808; border: 0.5px solid rgba(192,57,43,.3); }
     .cc-valentine .ccard-tag { background: #f7dfe8; color: #8f3558; }
-    .cc-grad      { background: #1a1505; border: 0.5px solid rgba(245,200,66,.3); }
-    .cc-grad .ccard-tag      { background: #f7ecd0; color: #8f6a18; }
-    .cc-newyear   { background: #0a0a0f; border: 0.5px solid rgba(201,169,110,.3); }
+    .cc-cny .ccard-tag       { background: #fde8c0; color: #9a3300; }
     .cc-newyear .ccard-tag   { background: #f4f3f0; color: #68686a; }
-    .cc-material  { background: #0d0d0d; border: 0.5px solid rgba(217,119,87,.3); }
     .cc-material .ccard-tag  { background: #f0ede4; color: #7a7870; }
 
     /* ════ MARQUEE STRIP ════ */
@@ -457,7 +653,7 @@
       font-size: 10px;
       letter-spacing: .18em;
       text-transform: uppercase;
-      color: var(--n800);
+      color: rgb(176,174,165);
       padding: 0 32px;
       display: flex;
       align-items: center;
@@ -674,10 +870,9 @@
     /* ════ MOBILE MENU ════ */
     .mobile-menu {
       position: fixed;
-      inset: 64px 0 0;
+      inset: 0;
       background: var(--dark);
-      border-top: var(--border);
-      z-index: 98;
+      z-index: 199;
       display: flex; flex-direction: column;
       align-items: flex-start;
       padding: 40px 24px;
@@ -688,6 +883,16 @@
     .mobile-menu.open { transform: translateX(0); }
     .mobile-menu .nav-link { font-size: 13px; letter-spacing: .12em; }
     .mobile-menu .btn { width: 100%; justify-content: center; }
+    .mobile-menu-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      background: none;
+      border: none;
+      color: var(--n400);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 8px;
+    }
 
     /* ════ STICKY CTA (mobile only) ════ */
     .sticky-cta {
@@ -715,28 +920,20 @@
     @media (max-width: 768px) {
       body { padding-bottom: 72px; }
 
-      /* Header */
-      nav { display: none; }
-      .nav-header-cta { display: none; }
-      .hamburger { display: flex; }
-      .header-inner { height: 56px; padding: 0 16px; }
-      .logo-img { height: 28px; }
-      .mobile-menu { inset: 56px 0 0; }
+      /* Floating nav hidden on mobile; hamburger takes over */
+      .floating-nav { display: none; }
+      .floating-hamburger { display: flex; }
+      .theme-switch-widget { top: 14px; right: 14px; padding: 7px 11px; }
 
       /* Sticky CTA */
       .sticky-cta { display: flex; }
 
       /* Hero */
-      .hero { padding: 32px 0 28px; }
-      .hero-inner { grid-template-columns: 1fr; gap: 32px; }
-      .hero-grid { aspect-ratio: auto; }
-      .hcard { min-height: 120px; }
-      .hcard-icon { font-size: 52px; }
-      .hcard-name { font-size: 18px; }
-      .hero-h1 { font-size: 62px; line-height: 1.05; }
+      .hero { padding: 100px 24px 0; }
+      .hero-h1 { font-size: clamp(44px, 10vw, 64px); }
       .hero-sub { font-size: 13px; }
-      .hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-      .hero-eyebrow { margin-bottom: 16px; }
+      .hero-marquee { height: 30%; }
+      .hero-marquee-item { height: 160px; }
 
       /* Stats */
       .stats-inner { grid-template-columns: repeat(3, 1fr); }
@@ -813,82 +1010,72 @@
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header id="site-header">
-    <div class="header-inner">
-      <a href="/">
-        <img src="Brand Assets/Logo Transpaerent 2.png" alt="ROYRAAN" class="logo-img" style="height:34px;width:auto;object-fit:contain;">
-      </a>
-      <nav id="main-nav">
-        <a href="#catalog" class="nav-link">Catalog</a>
-        <a href="#catalog" class="nav-link">เทศกาล</a>
-        <a href="#contact" class="nav-link">เกี่ยวกับ</a>
-        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-          <span id="theme-icon">☀</span><span id="theme-label">Light</span>
-        </button>
-        <a href="#contact" class="btn btn-accent nav-header-cta" style="padding:9px 20px;font-size:12px;">ติดต่อ LINE</a>
-      </nav>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <button class="theme-toggle" id="theme-toggle-mobile" aria-label="Toggle theme" style="display:none;">
-          <span id="theme-icon-mobile">☀</span>
-        </button>
-        <button class="hamburger" id="hamburger" aria-label="Open menu">
-          <span></span><span></span><span></span>
-        </button>
-      </div>
+  <!-- FLOATING NAV (desktop) -->
+  <div class="floating-nav" id="floating-nav">
+    <ul class="pill-nav" id="pill-nav">
+      <li><a href="#intro">Home</a></li>
+      <li><a href="#catalog">Catalog</a></li>
+      <li><a href="#catalog">เทศกาล</a></li>
+      <li><a href="#contact">ติดต่อเรา</a></li>
+      <span class="nav-cursor" id="nav-cursor"></span>
+    </ul>
+  </div>
+
+  <!-- FLOATING HAMBURGER (mobile) -->
+  <button class="floating-hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- FLOATING THEME SWITCH -->
+  <div class="theme-switch-widget" id="theme-switch-widget">
+    <span class="theme-switch-icon active" id="theme-sun" aria-label="Light mode">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    </span>
+    <div class="theme-track" id="theme-track">
+      <div class="theme-thumb"></div>
     </div>
-  </header>
+    <span class="theme-switch-icon" id="theme-moon" aria-label="Dark mode">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+    </span>
+  </div>
 
   <!-- MOBILE MENU -->
   <div class="mobile-menu" id="mobile-menu">
+    <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">✕</button>
+    <a href="#intro" class="nav-link">Home</a>
     <a href="#catalog" class="nav-link">Catalog</a>
     <a href="#catalog" class="nav-link">เทศกาล</a>
-    <a href="#contact" class="nav-link">เกี่ยวกับ</a>
-    <a href="#contact" class="btn btn-accent" style="margin-top:8px;">ติดต่อ LINE</a>
+    <a href="#contact" class="nav-link">ติดต่อเรา</a>
   </div>
+
+  <section class="intro-section" id="intro">
+    <div class="intro-inner">
+      <img src="Brand CI & UI/Logo Transpaerent 2.png" alt="ROYRAAN" class="intro-logo logo-img">
+      <h2 class="intro-h2">Design without Limit</h2>
+      <span class="intro-sub">This is where it begins</span>
+    </div>
+  </section>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="wrap">
-      <div class="hero-inner">
-        <div>
-          <p class="mono hero-eyebrow reveal">Seasonal Decoration Wholesale · Thailand</p>
-          <h1 class="hero-h1 reveal reveal-delay-1">
-            You dream it,<br>
-            <span class="accent">We make it</span>
-            <span class="hero-thai-sub">ของตกแต่งทุกเทศกาล <span style="color:var(--orange);">ส่งทั่วไทย</span></span>
-          </h1>
-          <p class="hero-sub reveal reveal-delay-2">
-            ราคาส่ง และ ปลีก<br>
-            ของตกแต่งเทศกาลครบวงจร สำหรับ ลูกค้าใช้เอง ร้านค้า ร้านอาหาร และ event organizer
-          </p>
-          <div class="hero-actions reveal reveal-delay-3">
-            <a href="#catalog" class="btn btn-accent">ดู Catalog</a>
-            <a href="#contact" class="btn btn-outline">ติดต่อสั่งซื้อ</a>
-          </div>
-        </div>
-        <div class="hero-grid reveal reveal-delay-2">
-          <div class="hcard hc-halloween" data-modal="halloween">
-            <div class="hcard-icon">🎃</div>
-            <p class="hcard-season">Season 01</p>
-            <p class="hcard-name">Halloween</p>
-          </div>
-          <div class="hcard hc-christmas" data-modal="christmas">
-            <div class="hcard-icon">🎄</div>
-            <p class="hcard-season">Season 02</p>
-            <p class="hcard-name">Christmas</p>
-          </div>
-          <div class="hcard hc-valentine" data-modal="valentine">
-            <div class="hcard-icon">🌹</div>
-            <p class="hcard-season">Season 03</p>
-            <p class="hcard-name">Valentine</p>
-          </div>
-          <div class="hcard hc-grad" data-modal="grad">
-            <div class="hcard-icon">🎓</div>
-            <p class="hcard-season">Season 04</p>
-            <p class="hcard-name">งานปัจฉิม</p>
-          </div>
-        </div>
+    <div class="hero-center">
+      <div class="hero-pill">Seasonal Decoration Wholesale · Thailand</div>
+      <h1 class="hero-h1">
+        Unlimited<br>
+        <span class="hero-rotate-wrap accent"><span class="hero-rotate-inner" id="hero-rotate">Vision</span></span>
+      </h1>
+      <p class="hero-sub">
+        ราคาส่ง และ ปลีก<br>
+        ของตกแต่งเทศกาลครบวงจร สำหรับ ลูกค้าใช้เอง ร้านค้า ร้านอาหาร และ event organizer
+      </p>
+      <div class="hero-actions">
+        <a href="#catalog" class="btn btn-accent">ดู Catalog</a>
+        <a href="#contact" class="btn btn-outline">ติดต่อสั่งซื้อ</a>
+      </div>
+    </div>
+    <div class="hero-marquee">
+      <div class="hero-marquee-track" id="hero-marquee-track">
+        <!-- images injected by JS -->
       </div>
     </div>
   </section>
@@ -916,22 +1103,22 @@
   <!-- MARQUEE -->
   <div class="marquee-strip">
     <div class="marquee-track" id="marquee">
-      <span class="marquee-item" style="color:rgb(176,174,165)">Halloween <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">Christmas <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">Valentine <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">งานปัจฉิม <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">New Year <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">วัตถุดิบ <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">Seasonal Decoration Wholesale <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">Bangkok, Thailand <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">Halloween <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">Christmas <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">Valentine <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">งานปัจฉิม <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">New Year <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">วัตถุดิบ <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">Seasonal Decoration Wholesale <span class="marquee-dot"></span></span>
-      <span class="marquee-item" style="color:rgb(176,174,165)">Bangkok, Thailand <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Halloween <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Christmas <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Valentine <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Chinese New Year <span class="marquee-dot"></span></span>
+      <span class="marquee-item">New Year <span class="marquee-dot"></span></span>
+      <span class="marquee-item">วัตถุดิบ <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Seasonal Decoration Wholesale <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Bangkok, Thailand <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Halloween <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Christmas <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Valentine <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Chinese New Year <span class="marquee-dot"></span></span>
+      <span class="marquee-item">New Year <span class="marquee-dot"></span></span>
+      <span class="marquee-item">วัตถุดิบ <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Seasonal Decoration Wholesale <span class="marquee-dot"></span></span>
+      <span class="marquee-item">Bangkok, Thailand <span class="marquee-dot"></span></span>
     </div>
   </div>
 
@@ -943,25 +1130,22 @@
           <p class="mono section-eyebrow reveal">Our Collection</p>
           <h2 class="section-title reveal reveal-delay-1">Catalog สินค้า</h2>
         </div>
-        <p class="mono reveal reveal-delay-2" style="color:rgb(176,174,165);">6 เทศกาล · มากกว่า 2,000+ SKU</p>
       </div>
       <div class="catalog-grid">
-        <a href="#" class="ccard cc-halloween reveal" data-modal="halloween">
+        <a href="https://canva.link/royraanhalloween" target="_blank" rel="noopener noreferrer" class="ccard cc-halloween reveal">
           <div class="ccard-overlay"></div>
-          <div class="ccard-icon">🎃</div>
           <div class="ccard-body">
             <span class="ccard-tag">Halloween</span>
             <h3 class="ccard-name">Halloween</h3>
             <p class="ccard-desc">ฟักทอง · แมงมุม · กระดูก · ของตกแต่งสยองขวัญ</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
-              <span class="ccard-upcoming">Upcoming</span>
+              <span class="ccard-upcoming">See Product</span>
             </div>
           </div>
         </a>
         <a href="#" class="ccard cc-christmas reveal reveal-delay-1" data-modal="christmas">
           <div class="ccard-overlay"></div>
-          <div class="ccard-icon">🎄</div>
           <div class="ccard-body">
             <span class="ccard-tag">Christmas</span>
             <h3 class="ccard-name">Christmas</h3>
@@ -974,7 +1158,6 @@
         </a>
         <a href="#" class="ccard cc-valentine reveal reveal-delay-2" data-modal="valentine">
           <div class="ccard-overlay"></div>
-          <div class="ccard-icon">🌹</div>
           <div class="ccard-body">
             <span class="ccard-tag">Valentine</span>
             <h3 class="ccard-name">Valentine</h3>
@@ -985,13 +1168,12 @@
             </div>
           </div>
         </a>
-        <a href="#" class="ccard cc-grad reveal reveal-delay-1" data-modal="grad">
+        <a href="#" class="ccard cc-cny reveal reveal-delay-1" data-modal="cny">
           <div class="ccard-overlay"></div>
-          <div class="ccard-icon">🎓</div>
           <div class="ccard-body">
-            <span class="ccard-tag">งานปัจฉิม</span>
-            <h3 class="ccard-name">งานปัจฉิม</h3>
-            <p class="ccard-desc">ฉากถ่ายรูป · โบว์ · ช่อดอกไม้ · ของที่ระลึก</p>
+            <span class="ccard-tag">Chinese New Year</span>
+            <h3 class="ccard-name">Chinese New Year</h3>
+            <p class="ccard-desc">โคมไฟ · ซองแดง · ดอกเหมย · ของตกแต่งตรุษจีน</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
               <span class="ccard-upcoming">Upcoming</span>
@@ -1000,7 +1182,6 @@
         </a>
         <a href="#" class="ccard cc-newyear reveal reveal-delay-2" data-modal="newyear">
           <div class="ccard-overlay"></div>
-          <div class="ccard-icon">🎆</div>
           <div class="ccard-body">
             <span class="ccard-tag">New Year</span>
             <h3 class="ccard-name">New Year</h3>
@@ -1013,11 +1194,10 @@
         </a>
         <a href="#" class="ccard cc-material reveal reveal-delay-3" data-modal="material">
           <div class="ccard-overlay"></div>
-          <div class="ccard-icon">🎀</div>
           <div class="ccard-body">
-            <span class="ccard-tag">วัตถุดิบ</span>
-            <h3 class="ccard-name">วัตถุดิบ</h3>
-            <p class="ccard-desc">ริบบิ้น · ดอกไม้ปลอม · ลวด · วัสดุตกแต่งพื้นฐาน</p>
+            <span class="ccard-tag">วัตถุดิบ & งานปัจฉิม</span>
+            <h3 class="ccard-name">วัตถุดิบ & งานปัจฉิม</h3>
+            <p class="ccard-desc">ริบบิ้น · ดอกไม้ปลอม · ฉากถ่ายรูป · โบว์ · วัสดุตกแต่ง</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
               <span class="ccard-upcoming">Upcoming</span>
@@ -1034,7 +1214,7 @@
       <p class="mono section-eyebrow reveal">Contact & Social</p>
       <h2 class="section-title reveal reveal-delay-1">ติดต่อและติดตาม</h2>
       <div class="social-grid">
-        <a href="#" class="scard reveal reveal-delay-1">
+        <a href="https://lin.ee/VwQZmOq" target="_blank" rel="noopener noreferrer" class="scard reveal reveal-delay-1">
           <div class="scard-icon" style="background:#00B900;">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
           </div>
@@ -1043,7 +1223,7 @@
           <p class="scard-desc">สั่งซื้อ B2B · สอบถามราคาส่ง · แคตตาล็อกสินค้า</p>
           <span class="scard-cta">เพิ่มเพื่อน →</span>
         </a>
-        <a href="#" class="scard reveal reveal-delay-2">
+        <a href="https://www.facebook.com/raanroyraan?mibextid=LQQJ4d" target="_blank" rel="noopener noreferrer" class="scard reveal reveal-delay-2">
           <div class="scard-icon" style="background:#1877F2;">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           </div>
@@ -1052,7 +1232,7 @@
           <p class="scard-desc">อัปเดตสินค้าใหม่ · โปรโมชั่น · ของตกแต่งเทศกาล</p>
           <span class="scard-cta">ติดตาม →</span>
         </a>
-        <a href="#" class="scard reveal reveal-delay-3">
+        <a href="https://www.tiktok.com/@royraan.str?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" class="scard reveal reveal-delay-3">
           <div class="scard-icon" style="background:#010101;">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
           </div>
@@ -1061,7 +1241,7 @@
           <p class="scard-desc">Content เบื้องหลัง · ไอเดียตกแต่ง · Trend เทศกาล</p>
           <span class="scard-cta">ดูวิดีโอ →</span>
         </a>
-        <a href="#" class="scard reveal reveal-delay-4">
+        <a href="https://www.instagram.com/royraanofficial" target="_blank" rel="noopener noreferrer" class="scard reveal reveal-delay-4">
           <div class="scard-icon" style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
           </div>
@@ -1069,6 +1249,15 @@
           <span class="scard-handle">@royraanofficial</span>
           <p class="scard-desc">Brand Image · ภาพสินค้า · แรงบันดาลใจการตกแต่ง</p>
           <span class="scard-cta">ติดตาม →</span>
+        </a>
+        <a href="https://th.shp.ee/Z6q2vXkZ" target="_blank" rel="noopener noreferrer" class="scard reveal reveal-delay-5">
+          <div class="scard-icon" style="background:#EE4D2D;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M19.5 7.5h-1.6C17.7 4.98 15.08 3 12 3S6.3 4.98 6.1 7.5H4.5A1.5 1.5 0 0 0 3 9v10.5A1.5 1.5 0 0 0 4.5 21h15a1.5 1.5 0 0 0 1.5-1.5V9a1.5 1.5 0 0 0-1.5-1.5zM12 4.5c2.21 0 4.05 1.35 4.43 3H7.57C7.95 5.85 9.79 4.5 12 4.5zm0 9a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5z"/></svg>
+          </div>
+          <span class="scard-platform">Shopee</span>
+          <span class="scard-handle">rrpoppy</span>
+          <p class="scard-desc">สั่งซื้อออนไลน์ · จัดส่งทั่วประเทศ · รีวิวสินค้า</p>
+          <span class="scard-cta">เยี่ยมชมร้าน →</span>
         </a>
       </div>
     </div>
@@ -1109,8 +1298,7 @@
 
   <!-- STICKY CTA (mobile only) -->
   <div class="sticky-cta">
-    <a href="#contact" class="btn btn-accent">ติดต่อ LINE</a>
-    <a href="#catalog" class="btn btn-outline">ดู Catalog</a>
+    <a href="#catalog" class="btn btn-accent btn-full">ดู Catalog</a>
   </div>
 
   <!-- CATALOG MODAL -->
@@ -1133,50 +1321,38 @@
   </div>
 
   <script>
-    /* ── Theme toggle (desktop + mobile sync) ── */
+    /* ── Theme switch (Sun / Moon) ── */
     let isLight = false;
+    const themeTrack = document.getElementById('theme-track');
+    const themeSun   = document.getElementById('theme-sun');
+    const themeMoon  = document.getElementById('theme-moon');
     function applyTheme() {
       document.body.classList.toggle('light-mode', isLight);
-      const icon  = isLight ? '☾' : '☀';
-      const label = isLight ? 'Dark' : 'Light';
-      document.getElementById('theme-icon').textContent = icon;
-      document.getElementById('theme-label').textContent = label;
-      const mi = document.getElementById('theme-icon-mobile');
-      if (mi) mi.textContent = icon;
+      themeTrack.classList.toggle('light-on', isLight);
+      themeSun.classList.toggle('active', isLight);
+      themeMoon.classList.toggle('active', !isLight);
     }
-    document.getElementById('theme-toggle').addEventListener('click', () => { isLight = !isLight; applyTheme(); });
-    const mobileToggle = document.getElementById('theme-toggle-mobile');
-    if (mobileToggle) mobileToggle.addEventListener('click', () => { isLight = !isLight; applyTheme(); });
-
-    /* ── Show/hide mobile theme toggle based on viewport ── */
-    function syncHeaderControls() {
-      const isMobile = window.innerWidth <= 768;
-      if (mobileToggle) mobileToggle.style.display = isMobile ? 'flex' : 'none';
-    }
-    syncHeaderControls();
-    window.addEventListener('resize', syncHeaderControls);
-
-    /* ── Scroll: header state ── */
-    const header = document.getElementById('site-header');
-    window.addEventListener('scroll', () => {
-      header.classList.toggle('scrolled', window.scrollY > 10);
-    });
+    themeTrack.addEventListener('click', () => { isLight = !isLight; applyTheme(); });
+    themeSun.addEventListener('click',   () => { isLight = true;  applyTheme(); });
+    themeMoon.addEventListener('click',  () => { isLight = false; applyTheme(); });
+    applyTheme();
 
     /* ── Hamburger + mobile menu ── */
     const ham = document.getElementById('hamburger');
     const mobileMenu = document.getElementById('mobile-menu');
+    const mobileClose = document.getElementById('mobile-menu-close');
+    function closeMenu() {
+      mobileMenu.classList.remove('open');
+      ham.classList.remove('open');
+      document.body.style.overflow = '';
+    }
     ham.addEventListener('click', () => {
       const open = mobileMenu.classList.toggle('open');
       ham.classList.toggle('open', open);
       document.body.style.overflow = open ? 'hidden' : '';
     });
-    mobileMenu.querySelectorAll('a').forEach(l => {
-      l.addEventListener('click', () => {
-        mobileMenu.classList.remove('open');
-        ham.classList.remove('open');
-        document.body.style.overflow = '';
-      });
-    });
+    if (mobileClose) mobileClose.addEventListener('click', closeMenu);
+    mobileMenu.querySelectorAll('a').forEach(l => l.addEventListener('click', closeMenu));
 
     /* ── Reveal animations ── */
     const allReveals = document.querySelectorAll('.reveal');
@@ -1214,11 +1390,11 @@
     /* ── Catalog modal data ── */
     const modalData = {
       halloween: { icon: '🎃', eyebrow: 'Season 01 · Halloween', title: 'Halloween', desc: 'ของตกแต่งสยองขวัญครบครัน ฟักทอง แมงมุม กระดูก และอีกกว่า 300 SKU สำหรับร้านค้า event organizer และ florist' },
-      christmas: { icon: '🎄', eyebrow: 'Season 02 · Christmas', title: 'Christmas', desc: 'ต้นคริสต์มาส ลูกโลก ริบบิ้น หิมะเทียม และของตกแต่งช่วงเทศกาลครบวงจร กว่า 500 SKU' },
+      christmas: { icon: '🎄', eyebrow: 'Season 02 · Christmas', title: 'Christmas', desc: 'ต้นคริสต์มาส ลูกโลก ริบบิ้น หิมะเทียม และของตกแต่งช่วงเทศกาลครบวงจร' },
       valentine: { icon: '🌹', eyebrow: 'Season 03 · Valentine', title: 'Valentine', desc: 'หัวใจ ดอกไม้ ริบบิ้น บอลลูนวาเลนไทน์ และของตกแต่งแห่งความรัก สำหรับทั้ง B2B และ B2C' },
-      grad:      { icon: '🎓', eyebrow: 'Season 04 · งานปัจฉิม', title: 'งานปัจฉิม', desc: 'ฉากถ่ายรูป โบว์ ช่อดอกไม้ ของที่ระลึก และของตกแต่งสำหรับงานรับปริญญาและปัจฉิมนิเทศ' },
+      cny:       { icon: '🧧', eyebrow: 'Season 04 · Chinese New Year', title: 'Chinese New Year', desc: 'โคมไฟ ซองแดง ดอกเหมย และของตกแต่งตรุษจีนครบครัน สำหรับร้านค้า ร้านอาหาร และ event organizer' },
       newyear:   { icon: '🎆', eyebrow: 'Season 05 · New Year', title: 'New Year', desc: 'ดาว แชมเปญ บอลลูนปีใหม่ และของตกแต่งงานฉลองต้อนรับปีใหม่ ครบทุก style' },
-      material:  { icon: '🎀', eyebrow: 'วัตถุดิบ · Craft Supplies', title: 'วัตถุดิบ', desc: 'ริบบิ้น ดอกไม้ปลอม ลวด และวัสดุตกแต่งพื้นฐานสำหรับ florist และผู้ทำงานด้าน event' },
+      material:  { icon: '🎀', eyebrow: 'วัตถุดิบ & งานปัจฉิม · Craft Supplies', title: 'วัตถุดิบ & งานปัจฉิม', desc: 'ริบบิ้น ดอกไม้ปลอม ลวด ฉากถ่ายรูป โบว์ และวัสดุตกแต่งพื้นฐานสำหรับ florist งานรับปริญญา และ event' },
     };
 
     const backdrop = document.getElementById('modal-backdrop');
@@ -1255,6 +1431,26 @@
     modalClose.addEventListener('click', closeModal);
     backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    /* ── Pill nav sliding cursor ── */
+    const pillNav = document.getElementById('pill-nav');
+    const navCursor = document.getElementById('nav-cursor');
+    const pillItems = pillNav ? pillNav.querySelectorAll('li') : [];
+    pillItems.forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        navCursor.style.left  = item.offsetLeft + 'px';
+        navCursor.style.width = item.offsetWidth + 'px';
+        navCursor.style.opacity = '1';
+        pillItems.forEach(i => i.classList.remove('hovered'));
+        item.classList.add('hovered');
+      });
+    });
+    if (pillNav) {
+      pillNav.addEventListener('mouseleave', () => {
+        navCursor.style.opacity = '0';
+        pillItems.forEach(i => i.classList.remove('hovered'));
+      });
+    }
   </script>
 
   <!-- Leaflet JS -->
@@ -1288,6 +1484,93 @@
 
       map.on('click', () => map.scrollWheelZoom.enable());
       map.getContainer().addEventListener('mouseleave', () => map.scrollWheelZoom.disable());
+    })();
+  </script>
+
+  <script>
+    /* ── Hero scroll reveal ── */
+    (function() {
+      const hero = document.querySelector('.hero');
+      if (!hero) return;
+      const els = hero.querySelectorAll('.hero-pill, .hero-h1, .hero-sub, .hero-actions');
+      const obs = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          els.forEach(el => el.classList.add('revealed'));
+          obs.disconnect();
+        }
+      }, { threshold: 0.15 });
+      obs.observe(hero);
+    })();
+
+    /* ── Rotating hero word ── */
+    (function() {
+      const el = document.getElementById('hero-rotate');
+      if (!el) return;
+      const words = ['Vision', 'Design', 'You'];
+      let idx = 0;
+      setInterval(() => {
+        // exit current
+        el.classList.add('exit');
+        setTimeout(() => {
+          idx = (idx + 1) % words.length;
+          el.textContent = words[idx];
+          el.classList.remove('exit');
+          el.classList.add('enter');
+          // force reflow so transition fires
+          el.getBoundingClientRect();
+          el.classList.remove('enter');
+        }, 320);
+      }, 2200);
+    })();
+
+    /* ── 3D tilt on catalog cards ── */
+    (function() {
+      document.querySelectorAll('.ccard').forEach(card => {
+        card.style.transformStyle = 'preserve-3d';
+        card.addEventListener('mousemove', (e) => {
+          const r = card.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width  - 0.5;
+          const y = (e.clientY - r.top)  / r.height - 0.5;
+          card.style.transform =
+            'perspective(900px) rotateX(' + (-y * 10.5).toFixed(2) + 'deg) rotateY(' + (x * 10.5).toFixed(2) + 'deg)';
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
+        });
+      });
+    })();
+
+    /* ── Hero bottom marquee ── */
+    (function() {
+      const track = document.getElementById('hero-marquee-track');
+      if (!track) return;
+      const images = [
+        'Showcase Image/1.jpg',
+        'Showcase Image/3.jpg',
+        'Showcase Image/30012.jpg',
+        'Showcase Image/34.png',
+        'Showcase Image/5.jpg',
+        'Showcase Image/P1155351.JPG',
+        'Showcase Image/P1156405.JPG',
+        'Showcase Image/P1156436.JPG',
+        'Showcase Image/P1156456.JPG',
+        'Showcase Image/P1156667.JPG',
+        'Showcase Image/Shooted Silver No logo.png',
+        'Showcase Image/Xmas Tree.png',
+        'Showcase Image/หมวกกันน้ำ Final.png',
+      ];
+      const doubled = [...images, ...images];
+      doubled.forEach((src, i) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'hero-marquee-item';
+        wrap.style.transform = 'rotate(' + (i % 2 === 0 ? -2 : 5) + 'deg)';
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = '';
+        img.draggable = false;
+        wrap.appendChild(img);
+        track.appendChild(wrap);
+      });
     })();
   </script>
 
