@@ -634,6 +634,27 @@
     .cc-newyear .ccard-tag   { background: #f4f3f0; color: #68686a; }
     .cc-material .ccard-tag  { background: #f0ede4; color: #7a7870; }
 
+    /* ══ Modal Category Buttons ══ */
+    .modal-categories { display: none; flex-direction: column; gap: 8px; }
+    .modal-categories.show { display: flex; }
+    .modal-cat-btn {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: var(--border);
+      background: none;
+      font-size: 13px;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    a.modal-cat-btn { color: var(--light); cursor: pointer; }
+    a.modal-cat-btn:hover, a.modal-cat-btn:active { color: var(--orange); background: rgba(128,128,128,0.07); }
+    button.modal-cat-btn { color: var(--n800); cursor: default; }
+
     /* ════ MARQUEE STRIP ════ */
     .marquee-strip {
       border-top: var(--border);
@@ -1132,7 +1153,7 @@
         </div>
       </div>
       <div class="catalog-grid">
-        <a href="https://canva.link/royraanhalloween" target="_blank" rel="noopener noreferrer" class="ccard cc-halloween reveal">
+        <div class="ccard cc-halloween reveal" data-modal="halloween">
           <div class="ccard-overlay"></div>
           <div class="ccard-body">
             <span class="ccard-tag">Halloween</span>
@@ -1143,8 +1164,8 @@
               <span class="ccard-upcoming">See Product</span>
             </div>
           </div>
-        </a>
-        <a href="#" class="ccard cc-christmas reveal reveal-delay-1" data-modal="christmas">
+        </div>
+        <div class="ccard cc-christmas reveal reveal-delay-1" data-modal="christmas">
           <div class="ccard-overlay"></div>
           <div class="ccard-body">
             <span class="ccard-tag">Christmas</span>
@@ -1155,7 +1176,7 @@
               <span class="ccard-upcoming">Upcoming</span>
             </div>
           </div>
-        </a>
+        </div>
         <a href="#" class="ccard cc-valentine reveal reveal-delay-2" data-modal="valentine">
           <div class="ccard-overlay"></div>
           <div class="ccard-body">
@@ -1317,6 +1338,7 @@
         <span class="modal-upcoming-dot"></span>
         Upcoming
       </div>
+      <div class="modal-categories" id="modal-categories"></div>
     </div>
   </div>
 
@@ -1389,7 +1411,19 @@
 
     /* ── Catalog modal data ── */
     const modalData = {
-      halloween: { icon: '🎃', eyebrow: 'Season 01 · Halloween', title: 'Halloween', desc: 'ของตกแต่งสยองขวัญครบครัน ฟักทอง แมงมุม กระดูก และอีกกว่า 300 SKU สำหรับร้านค้า event organizer และ florist' },
+      halloween: {
+        icon: '🎃', eyebrow: 'Season 01 · Halloween', title: 'Halloween',
+        desc: 'ของตกแต่งสยองขวัญครบครัน ฟักทอง แมงมุม กระดูก และอีกกว่า 300 SKU สำหรับร้านค้า event organizer และ florist',
+        categories: [
+          { icon: '📦', label: 'Catalog รวม',                href: 'https://canva.link/royraanhalloween' },
+          { icon: '👻', label: 'หุ่นทุกแบบ',                 href: null },
+          { icon: '🕷️', label: 'อุปกรณ์ตกแต่ง',              href: null },
+          { icon: '💡', label: 'สายไฟตกแต่ง',               href: null },
+          { icon: '🎭', label: 'พร๊อพ อุปกรณ์',             href: null },
+          { icon: '🎃', label: 'หน้ากาก หมวก เครื่องประดับ', href: null },
+          { icon: '👗', label: 'ชุดฮาโลวีน',               href: null },
+        ],
+      },
       christmas: { icon: '🎄', eyebrow: 'Season 02 · Christmas', title: 'Christmas', desc: 'ต้นคริสต์มาส ลูกโลก ริบบิ้น หิมะเทียม และของตกแต่งช่วงเทศกาลครบวงจร' },
       valentine: { icon: '🌹', eyebrow: 'Season 03 · Valentine', title: 'Valentine', desc: 'หัวใจ ดอกไม้ ริบบิ้น บอลลูนวาเลนไทน์ และของตกแต่งแห่งความรัก สำหรับทั้ง B2B และ B2C' },
       cny:       { icon: '🧧', eyebrow: 'Season 04 · Chinese New Year', title: 'Chinese New Year', desc: 'โคมไฟ ซองแดง ดอกเหมย และของตกแต่งตรุษจีนครบครัน สำหรับร้านค้า ร้านอาหาร และ event organizer' },
@@ -1407,15 +1441,28 @@
       document.getElementById('modal-eyebrow').textContent = d.eyebrow;
       document.getElementById('modal-title').textContent = d.title;
       document.getElementById('modal-desc').textContent = d.desc;
-      const actions  = document.getElementById('modal-actions');
-      const upcoming = document.getElementById('modal-upcoming');
-      if (d.hasLink) {
+      const actions    = document.getElementById('modal-actions');
+      const upcoming   = document.getElementById('modal-upcoming');
+      const categories = document.getElementById('modal-categories');
+
+      actions.style.display = 'none';
+      upcoming.classList.remove('show');
+      categories.classList.remove('show');
+      categories.innerHTML = '';
+
+      if (d.categories && d.categories.length) {
+        categories.innerHTML = d.categories.map(cat =>
+          cat.href
+            ? `<a class="modal-cat-btn" href="${cat.href}" target="_blank" rel="noopener noreferrer">${cat.label}</a>`
+            : `<button class="modal-cat-btn" type="button">${cat.label}</button>`
+        ).join('');
+        categories.classList.add('show');
+      } else if (d.hasLink) {
         actions.style.display = '';
-        upcoming.classList.remove('show');
       } else {
-        actions.style.display = 'none';
         upcoming.classList.add('show');
       }
+
       backdrop.classList.add('open');
       document.body.style.overflow = 'hidden';
     }
@@ -1572,7 +1619,9 @@
         track.appendChild(wrap);
       });
     })();
+
   </script>
+
 
 </body>
 </html>
