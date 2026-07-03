@@ -47,7 +47,6 @@
     body.light-mode .modal { background: #f0ede4; }
     body.light-mode .mobile-menu { background: #faf9f5; }
     body.light-mode footer { background: #f0ede4; }
-    body.light-mode #royraan-map { opacity: 0.85; }
     body.light-mode .hero-sub { color: #5a5852; }
     body.light-mode .footer-tagline { color: #7a7870; }
     body.light-mode .footer-col-label { color: #7a7870; }
@@ -797,6 +796,11 @@
     .leaflet-attribution-flag { display: none !important; }
     .leaflet-control-attribution { background: rgba(20,20,19,.7) !important; color: #3d3a37 !important; font-size: 8px !important; }
     .leaflet-control-attribution a { color: #3d3a37 !important; }
+    body.light-mode .leaflet-control-zoom { border-color: #d0cdc4 !important; }
+    body.light-mode .leaflet-control-zoom a { background: #f0ede4 !important; border-bottom-color: #d0cdc4 !important; color: #5a5852 !important; }
+    body.light-mode .leaflet-control-zoom a:hover { background: #e8e5dc !important; color: #141413 !important; }
+    body.light-mode .leaflet-control-attribution { background: rgba(250,249,245,.7) !important; color: #7a7870 !important; }
+    body.light-mode .leaflet-control-attribution a { color: #7a7870 !important; }
 
     .footer-info { padding: 48px 0; }
     .footer-cols {
@@ -1034,8 +1038,9 @@
   <!-- FLOATING NAV (desktop) -->
   <div class="floating-nav" id="floating-nav">
     <ul class="pill-nav" id="pill-nav">
-      <li><a href="#intro">Home</a></li>
+      <li><a href="#hero">Home</a></li>
       <li><a href="#catalog">Catalog</a></li>
+      <li><a href="#location">Location</a></li>
       <li><a href="#contact">ติดต่อเรา</a></li>
       <span class="nav-cursor" id="nav-cursor"></span>
     </ul>
@@ -1062,8 +1067,9 @@
   <!-- MOBILE MENU -->
   <div class="mobile-menu" id="mobile-menu">
     <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">✕</button>
-    <a href="#intro" class="nav-link">Home</a>
+    <a href="#hero" class="nav-link">Home</a>
     <a href="#catalog" class="nav-link">Catalog</a>
+    <a href="#location" class="nav-link">Location</a>
     <a href="#contact" class="nav-link">ติดต่อเรา</a>
   </div>
 
@@ -1076,7 +1082,7 @@
   </section>
 
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero" id="hero">
     <div class="hero-center">
       <div class="hero-pill">Seasonal Decoration Wholesale · Thailand</div>
       <h1 class="hero-h1">
@@ -1239,7 +1245,7 @@
           </div>
           <span class="scard-platform">LINE OA</span>
           <span class="scard-handle">@royraan</span>
-          <p class="scard-desc">สั่งซื้อ B2B · สอบถามราคาส่ง · แคตตาล็อกสินค้า</p>
+          <p class="scard-desc">สั่งซื้อสินค้า · สอบถามราคา</p>
           <span class="scard-cta">เพิ่มเพื่อน →</span>
         </a>
         <a href="https://www.facebook.com/raanroyraan?mibextid=LQQJ4d" target="_blank" rel="noopener noreferrer" class="scard reveal reveal-delay-2">
@@ -1248,7 +1254,7 @@
           </div>
           <span class="scard-platform">Facebook</span>
           <span class="scard-handle">ร้านร้อยร้าน RaanRoyraan</span>
-          <p class="scard-desc">อัปเดตสินค้าใหม่ · โปรโมชั่น · ของตกแต่งเทศกาล</p>
+          <p class="scard-desc">อัพเดทสินค้า · ข่าวสารของเรา · ติดต่อเรา</p>
           <span class="scard-cta">ติดตาม →</span>
         </a>
         <a href="https://www.tiktok.com/@royraan.str?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" class="scard reveal reveal-delay-3">
@@ -1257,7 +1263,7 @@
           </div>
           <span class="scard-platform">TikTok</span>
           <span class="scard-handle">@royraan.str</span>
-          <p class="scard-desc">Content เบื้องหลัง · ไอเดียตกแต่ง · Trend เทศกาล</p>
+          <p class="scard-desc">Content · ไอเดีย · Trend</p>
           <span class="scard-cta">ดูวิดีโอ →</span>
         </a>
         <a href="https://www.instagram.com/royraanofficial" target="_blank" rel="noopener noreferrer" class="scard reveal reveal-delay-4">
@@ -1266,7 +1272,7 @@
           </div>
           <span class="scard-platform">Instagram</span>
           <span class="scard-handle">@royraanofficial</span>
-          <p class="scard-desc">Brand Image · ภาพสินค้า · แรงบันดาลใจการตกแต่ง</p>
+          <p class="scard-desc">อัพเดทสินค้า · ข่าวสารของเรา · ติดต่อเรา</p>
           <span class="scard-cta">ติดตาม →</span>
         </a>
         <a href="https://th.shp.ee/Z6q2vXkZ" target="_blank" rel="noopener noreferrer" class="scard reveal reveal-delay-5">
@@ -1283,7 +1289,7 @@
   </section>
 
   <!-- FOOTER -->
-  <footer>
+  <footer id="location">
     <div class="fmap">
       <div id="royraan-map"></div>
       <div class="fmap-shade"></div>
@@ -1351,6 +1357,7 @@
       themeTrack.classList.toggle('light-on', isLight);
       themeSun.classList.toggle('active', isLight);
       themeMoon.classList.toggle('active', !isLight);
+      if (typeof window.setMapTheme === 'function') window.setMapTheme(isLight);
     }
     themeTrack.addEventListener('click', () => { isLight = !isLight; applyTheme(); });
     themeSun.addEventListener('click',   () => { isLight = true;  applyTheme(); });
@@ -1510,11 +1517,15 @@
         attributionControl: true,
       });
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      const mapTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         subdomains: 'abcd',
         maxZoom: 20,
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/">CARTO</a>',
       }).addTo(map);
+
+      window.setMapTheme = function (light) {
+        mapTiles.setUrl(`https://{s}.basemaps.cartocdn.com/${light ? 'light_all' : 'dark_all'}/{z}/{x}/{y}{r}.png`);
+      };
 
       const pinIcon = L.divIcon({
         html: `<div style="width:14px;height:14px;background:#d97757;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #141413;box-shadow:0 0 0 4px rgba(217,119,87,.35);"></div>`,
