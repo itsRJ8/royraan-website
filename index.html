@@ -240,29 +240,25 @@
       display: flex;
       align-items: center;
       list-style: none;
-      border: 0.5px solid rgba(255,255,255,0.22);
+      border: 0.5px solid rgba(0,0,0,0.15);
       border-radius: 100px;
       padding: 4px;
-      background: rgba(20,20,19,0.82);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: var(--orange);
     }
-    body.light-mode .pill-nav { background: rgba(250,249,245,0.88); border-color: rgba(0,0,0,0.2); }
     .pill-nav li { position: relative; z-index: 1; }
     .pill-nav li a {
       display: block;
       font-family: var(--fm);
       font-size: 10px;
+      font-weight: 700;
       letter-spacing: .15em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.6);
+      color: rgba(255,255,255,0.75);
       padding: 6px 16px;
       white-space: nowrap;
       transition: color .2s;
     }
-    body.light-mode .pill-nav li a { color: rgba(0,0,0,0.55); }
     .pill-nav li.hovered a { color: #fff; }
-    body.light-mode .pill-nav li.hovered a { color: #fff; }
     .nav-cursor {
       position: absolute;
       top: 4px;
@@ -270,7 +266,7 @@
       width: 0;
       height: calc(100% - 8px);
       border-radius: 100px;
-      background: var(--orange);
+      background: rgba(0,0,0,0.18);
       opacity: 0;
       pointer-events: none;
       z-index: 0;
@@ -1421,9 +1417,8 @@
         desc: 'ของตกแต่งสยองขวัญครบครัน ฟักทอง แมงมุม กระดูก และอีกกว่า 300 SKU สำหรับร้านค้า event organizer และ florist',
         categories: [
           { icon: '📦', label: 'Catalog รวม',                href: 'https://canva.link/royraanhalloween' },
-          { icon: '👻', label: 'หุ่นทุกแบบ',                 href: null },
+          { icon: '👻', label: 'หุ่นตกแต่ง',                 href: null },
           { icon: '🕷️', label: 'อุปกรณ์ตกแต่ง',              href: null },
-          { icon: '💡', label: 'สายไฟตกแต่ง',               href: null },
           { icon: '🎭', label: 'พร๊อพ อุปกรณ์',             href: null },
           { icon: '🎃', label: 'หน้ากาก หมวก เครื่องประดับ', href: null },
           { icon: '👗', label: 'ชุดฮาโลวีน',               href: null },
