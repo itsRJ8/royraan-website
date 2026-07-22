@@ -1036,8 +1036,8 @@
     <ul class="pill-nav" id="pill-nav">
       <li><a href="#hero">Home</a></li>
       <li><a href="#catalog">Catalog</a></li>
-      <li><a href="#location">Location</a></li>
       <li><a href="#contact">ติดต่อเรา</a></li>
+      <li><a href="#location">Location</a></li>
       <span class="nav-cursor" id="nav-cursor"></span>
     </ul>
   </div>
@@ -1065,8 +1065,8 @@
     <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">✕</button>
     <a href="#hero" class="nav-link">Home</a>
     <a href="#catalog" class="nav-link">Catalog</a>
-    <a href="#location" class="nav-link">Location</a>
     <a href="#contact" class="nav-link">ติดต่อเรา</a>
+    <a href="#location" class="nav-link">Location</a>
   </div>
 
   <section class="intro-section" id="intro">
@@ -1173,7 +1173,7 @@
             <p class="ccard-desc">ต้นคริสต์มาส · ลูกโลก · ริบบิ้น · หิมะเทียม</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
-              <span class="ccard-upcoming">Upcoming</span>
+              <span class="ccard-upcoming">See Product</span>
             </div>
           </div>
         </div>
@@ -1424,7 +1424,19 @@
           { icon: '👗', label: 'ชุดฮาโลวีน',               href: null },
         ],
       },
-      christmas: { icon: '🎄', eyebrow: 'Season 02 · Christmas', title: 'Christmas', desc: 'ต้นคริสต์มาส ลูกโลก ริบบิ้น หิมะเทียม และของตกแต่งช่วงเทศกาลครบวงจร' },
+      christmas: {
+        icon: '🎄', eyebrow: 'Season 02 · Christmas', title: 'Christmas',
+        desc: 'ต้นคริสต์มาส ลูกโลก ริบบิ้น หิมะเทียม และของตกแต่งช่วงเทศกาลครบวงจร',
+        categories: [
+          { icon: '📦', label: 'Catalog รวม',                  href: null },
+          { icon: '🎈', label: 'เป่าลม',                       href: null },
+          { icon: '🎄', label: 'ต้นไม้',                        href: null },
+          { icon: '🎗️', label: 'Garland หรีด เส้นสายรุ้ง',      href: null },
+          { icon: '✨', label: 'อุปกรณ์และประดับตกแต่ง',        href: null },
+          { icon: '🎊', label: 'ลูกโป่งทุกแบบ',                 href: null },
+          { icon: '🧥', label: 'ชุด เสื้อคลุม หมวก',            href: null },
+        ],
+      },
       valentine: { icon: '🌹', eyebrow: 'Season 03 · Valentine', title: 'Valentine', desc: 'หัวใจ ดอกไม้ ริบบิ้น บอลลูนวาเลนไทน์ และของตกแต่งแห่งความรัก สำหรับทั้ง B2B และ B2C' },
       cny:       { icon: '🧧', eyebrow: 'Season 04 · Chinese New Year', title: 'Chinese New Year', desc: 'โคมไฟ ซองแดง ดอกเหมย และของตกแต่งตรุษจีนครบครัน สำหรับร้านค้า ร้านอาหาร และ event organizer' },
       newyear:   { icon: '🎆', eyebrow: 'Season 05 · New Year', title: 'New Year', desc: 'ดาว แชมเปญ บอลลูนปีใหม่ และของตกแต่งงานฉลองต้อนรับปีใหม่ ครบทุก style' },
