@@ -259,6 +259,21 @@
       transition: color .2s;
     }
     .pill-nav li.hovered a { color: #fff; }
+    .pill-nav li a.nav-catalog { font-weight: 900; font-size: 12px; position: relative; overflow: visible; }
+    .magnet-particle {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      opacity: .3;
+      pointer-events: none;
+      z-index: 2;
+      transform: translate(-50%, -50%) translate(var(--px, 0px), var(--py, 0px));
+      transition: transform .5s cubic-bezier(.34, 1.56, .64, 1), opacity .25s ease;
+    }
+    .nav-catalog.magnet-attracting .magnet-particle { opacity: 1; }
+    body.light-mode .magnet-particle { background: #a84e2e; }
     .nav-cursor {
       position: absolute;
       top: 4px;
@@ -903,6 +918,7 @@
     }
     .mobile-menu.open { transform: translateX(0); }
     .mobile-menu .nav-link { font-size: 13px; letter-spacing: .12em; }
+    .mobile-menu .nav-link.nav-catalog { font-weight: 800; font-size: 15px; }
     .mobile-menu .btn { width: 100%; justify-content: center; }
     .mobile-menu-close {
       position: absolute;
@@ -1035,7 +1051,7 @@
   <div class="floating-nav" id="floating-nav">
     <ul class="pill-nav" id="pill-nav">
       <li><a href="#hero">Home</a></li>
-      <li><a href="#catalog">Catalog</a></li>
+      <li><a href="#catalog" class="nav-catalog" id="nav-catalog-magnet">Catalog</a></li>
       <li><a href="#contact">ติดต่อเรา</a></li>
       <li><a href="#location">Location</a></li>
       <span class="nav-cursor" id="nav-cursor"></span>
@@ -1064,7 +1080,7 @@
   <div class="mobile-menu" id="mobile-menu">
     <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">✕</button>
     <a href="#hero" class="nav-link">Home</a>
-    <a href="#catalog" class="nav-link">Catalog</a>
+    <a href="#catalog" class="nav-link nav-catalog">Catalog</a>
     <a href="#contact" class="nav-link">ติดต่อเรา</a>
     <a href="#location" class="nav-link">Location</a>
   </div>
@@ -1510,6 +1526,39 @@
         pillItems.forEach(i => i.classList.remove('hovered'));
       });
     }
+
+    /* ── Magnet particle CTA effect (Catalog nav link) ── */
+    function initMagnetParticles(el, { count = 10, spread = 20 } = {}) {
+      const particles = Array.from({ length: count }, () => {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = spread + Math.random() * spread;
+        const px = Math.cos(angle) * dist;
+        const py = Math.sin(angle) * dist;
+        const span = document.createElement('span');
+        span.className = 'magnet-particle';
+        span.style.setProperty('--px', px + 'px');
+        span.style.setProperty('--py', py + 'px');
+        el.appendChild(span);
+        return { span, px, py };
+      });
+
+      const attract = () => {
+        el.classList.add('magnet-attracting');
+        particles.forEach(p => { p.span.style.setProperty('--px', '0px'); p.span.style.setProperty('--py', '0px'); });
+      };
+      const release = () => {
+        el.classList.remove('magnet-attracting');
+        particles.forEach(p => { p.span.style.setProperty('--px', p.px + 'px'); p.span.style.setProperty('--py', p.py + 'px'); });
+      };
+
+      el.addEventListener('mouseenter', attract);
+      el.addEventListener('mouseleave', release);
+      el.addEventListener('touchstart', attract, { passive: true });
+      el.addEventListener('touchend', release);
+    }
+
+    const navCatalogMagnet = document.getElementById('nav-catalog-magnet');
+    if (navCatalogMagnet) initMagnetParticles(navCatalogMagnet);
   </script>
 
   <!-- Leaflet JS -->
