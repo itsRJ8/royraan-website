@@ -259,21 +259,7 @@
       transition: color .2s;
     }
     .pill-nav li.hovered a { color: #fff; }
-    .pill-nav li a.nav-catalog { font-weight: 900; font-size: 12px; position: relative; overflow: visible; }
-    .magnet-particle {
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #fff;
-      opacity: .3;
-      pointer-events: none;
-      z-index: 2;
-      transform: translate(-50%, -50%) translate(var(--px, 0px), var(--py, 0px));
-      transition: transform .5s cubic-bezier(.34, 1.56, .64, 1), opacity .25s ease;
-    }
-    .nav-catalog.magnet-attracting .magnet-particle { opacity: 1; }
-    body.light-mode .magnet-particle { background: #a84e2e; }
+    .pill-nav li a.nav-catalog { font-weight: 900; font-size: 12px; }
     .nav-cursor {
       position: absolute;
       top: 4px;
@@ -519,11 +505,113 @@
       justify-content: space-between;
       margin-bottom: 48px;
     }
-    .catalog-grid {
+    .catalog-subhead {
+      font-family: var(--fm);
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--n400);
+      margin: 0 0 20px;
+    }
+    .catalog-subhead:not(:first-child) { margin-top: 56px; }
+
+    /* Festival Category — horizontal hover-expand row (desktop) */
+    .festival-row {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+      height: 440px;
+    }
+    .festival-row .ccard {
+      flex: 1 1 0;
+      width: auto;
+      aspect-ratio: auto;
+      transition: flex-grow .5s cubic-bezier(0.2, 0.8, 0.3, 1), transform 0.18s cubic-bezier(0.2, 0.8, 0.3, 1), box-shadow 0.18s ease;
+    }
+    .festival-row .ccard:hover { flex-grow: 4; }
+
+    /* Name fits the collapsed strip (wraps instead of truncating), grows once the card expands */
+    .festival-row .ccard-name {
+      font-size: 14px;
+      font-weight: 700;
+      white-space: normal;
+      overflow-wrap: break-word;
+      transition: font-size .5s cubic-bezier(0.2, 0.8, 0.3, 1);
+    }
+    .festival-row .ccard:hover .ccard-name { font-size: 26px; }
+
+    /* Tag / description / CTA are collapsed (zero height, not just invisible) at rest so
+       their varying text length can't push the name to a different vertical position
+       card to card — they only occupy space once the card expands. */
+    .festival-row .ccard-tag,
+    .festival-row .ccard-desc,
+    .festival-row .ccard-cta-row {
+      opacity: 0;
+      max-height: 0;
+      margin-bottom: 0;
+      overflow: hidden;
+      transform: translateY(10px);
+      transition: opacity .4s ease .05s, transform .4s ease .05s, max-height .45s ease, margin-bottom .45s ease;
+      pointer-events: none;
+    }
+    .festival-row .ccard-cta-row { display: block; }
+    .festival-row .ccard:hover .ccard-tag,
+    .festival-row .ccard:hover .ccard-desc,
+    .festival-row .ccard:hover .ccard-cta-row {
+      opacity: 1;
+      max-height: 80px;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .festival-row .ccard:hover .ccard-tag { margin-bottom: 10px; }
+    .festival-row .ccard:hover .ccard-desc { margin-bottom: 16px; }
+
+    /* Product Category — smaller card grid (desktop only) */
+    .product-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       gap: 8px;
     }
+    .ccard-sm { padding: 14px; }
+    .ccard-sm .ccard-name { font-size: 15px; }
+
+    /* Group-hover reveal: hovering/focusing/clicking one product card highlights it
+       and de-emphasises the rest of the grid (scale down + dim + blur). */
+    .product-grid .ccard {
+      transition: transform .5s cubic-bezier(0.2, 0.8, 0.3, 1), opacity .5s ease, filter .5s ease, box-shadow .18s ease;
+    }
+    .product-grid:hover .ccard { transform: scale(.97); opacity: .6; filter: blur(2px); }
+    .product-grid .ccard:hover,
+    .product-grid .ccard:focus-visible,
+    .product-grid .ccard.is-active {
+      transform: scale(1.05) !important;
+      opacity: 1 !important;
+      filter: none !important;
+      z-index: 2;
+      outline: none;
+    }
+
+    /* Product cards: "Coming Soon" / CTA is the resting state; the product name
+       crossfades in as detail info on hover / keyboard focus / tap. */
+    .pcard { background: #131211; }
+    .pcard .ccard-body { display: grid; }
+    .pcard .ccard-name,
+    .pcard .ccard-upcoming { grid-area: 1 / 1; align-self: end; }
+    .pcard .ccard-name { margin-bottom: 0; opacity: 0; transition: opacity .3s ease; }
+    .pcard .ccard-upcoming {
+      position: static;
+      font-size: 16px;
+      white-space: normal;
+      opacity: 1;
+      transform: none;
+      color: #faf9f5;
+    }
+    .pcard:hover .ccard-name,
+    .pcard:focus-visible .ccard-name,
+    .pcard.is-active .ccard-name { opacity: 1; }
+    .pcard:hover .ccard-upcoming,
+    .pcard:focus-visible .ccard-upcoming,
+    .pcard.is-active .ccard-upcoming { opacity: 0 !important; }
     .ccard {
       position: relative;
       border-radius: 18px;
@@ -635,6 +723,19 @@
     .cc-cny::before       { background-image: url('Card Image/chinesenewyear.jpg'); }
     .cc-newyear::before   { background-image: url('Card Image/happynewyear.JPG'); }
     .cc-material::before  { background-image: url('Card Image/ปัจฉิม.jpg'); }
+    .pc-allproduct::before { background-image: url('Card Image/สินค้าทั้งหมด.png'); }
+    .pc-festival::before   { background-image: url('Card Image/Festival Decoration.png'); }
+    .pc-balloon::before    { background-image: url('Card Image/Balloon.png'); }
+    .pc-clothing::before   { background-image: url('Card Image/Clothing.png'); }
+    .pc-accessory::before  { background-image: url('Card Image/Accesories.png'); }
+    .pc-ribbon::before     { background-image: url('Card Image/Ribbon.png'); }
+
+    /* Swap to a plain orange background on hover/focus/tap so the text stays legible */
+    .pcard:hover::before,
+    .pcard:focus-visible::before,
+    .pcard.is-active::before {
+      background-image: url('Card Image/Detail.png');
+    }
 
     /* tag colours */
     .cc-halloween .ccard-tag { background: #f2c9b8; color: #a84e2e; }
@@ -705,7 +806,7 @@
     .social-section { padding: 96px 0; border-top: var(--border); }
     .social-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 8px;
       margin-top: 48px;
     }
@@ -713,38 +814,38 @@
       background: #1a1917;
       border: var(--border);
       border-radius: var(--r);
-      padding: 28px 22px;
+      padding: 18px 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 6px;
       transition: border-color .2s, transform .2s, background .2s;
       cursor: pointer;
     }
     .scard:hover { border-color: var(--n600); transform: translateY(-3px); background: #1e1d1b; }
     .scard:active { opacity: .8; transform: scale(.98); }
     .scard-icon {
-      width: 34px; height: 34px;
+      width: 26px; height: 26px;
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
     .scard-platform {
       font-family: var(--fm);
-      font-size: 9px;
+      font-size: 8px;
       letter-spacing: .15em;
       text-transform: uppercase;
       color: var(--n600);
     }
     .scard-handle {
       font-family: var(--fd);
-      font-size: 20px;
+      font-size: 15px;
       font-weight: 300;
       color: var(--light);
     }
-    .scard-desc { font-size: 12px; color: var(--n600); line-height: 1.6; }
+    .scard-desc { font-size: 10px; color: var(--n600); line-height: 1.5; }
     .scard-cta {
       font-family: var(--fm);
-      font-size: 9px;
+      font-size: 8px;
       letter-spacing: .12em;
       text-transform: uppercase;
       color: var(--n400);
@@ -979,9 +1080,31 @@
       .stat-num { font-size: 28px; }
       .stat-lbl { font-size: 10px; line-height: 1.4; }
 
-      /* Catalog */
+      /* Catalog — mobile shows both subsections, everything always visible (no hover/tap needed) */
       .catalog { padding: 40px 0; }
-      .catalog-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+      .festival-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; height: auto; }
+      .festival-row .ccard { flex: none; }
+      /* no hover on touch — keep name/tag/desc/CTA always visible, same as before */
+      .festival-row .ccard-name { font-size: 20px; font-weight: 700; }
+      .festival-row .ccard-tag,
+      .festival-row .ccard-desc,
+      .festival-row .ccard-cta-row { opacity: 1; max-height: none; transform: none; pointer-events: auto; }
+      .festival-row .ccard-tag { margin-bottom: 6px; }
+      .festival-row .ccard-desc { margin-bottom: 10px; }
+
+      .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .product-grid .ccard-sm { padding: 10px; }
+      /* no hover on touch — show product name + status stacked, always visible */
+      .pcard .ccard-body { display: flex; flex-direction: column; gap: 3px; }
+      .pcard .ccard-name,
+      .pcard .ccard-upcoming {
+        grid-area: auto;
+        position: static;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .pcard .ccard-name { font-size: 12px; font-weight: 700; }
+      .pcard .ccard-upcoming { font-size: 9px; }
       .catalog-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
       .section-eyebrow { margin-bottom: 10px; }
       .section-title { font-size: 28px; }
@@ -1034,7 +1157,8 @@
 
     /* Small mobile */
     @media (max-width: 480px) {
-      .catalog-grid { grid-template-columns: 1fr; }
+      .festival-row { grid-template-columns: 1fr; }
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
       .hero-actions { grid-template-columns: 1fr 1fr; }
       .social-grid { grid-template-columns: 1fr 1fr; }
 
@@ -1051,7 +1175,7 @@
   <div class="floating-nav" id="floating-nav">
     <ul class="pill-nav" id="pill-nav">
       <li><a href="#hero">Home</a></li>
-      <li><a href="#catalog" class="nav-catalog" id="nav-catalog-magnet">Catalog</a></li>
+      <li><a href="#catalog" class="nav-catalog">Catalog</a></li>
       <li><a href="#contact">ติดต่อเรา</a></li>
       <li><a href="#location">Location</a></li>
       <span class="nav-cursor" id="nav-cursor"></span>
@@ -1168,7 +1292,8 @@
           <h2 class="section-title reveal reveal-delay-1">Catalog สินค้า</h2>
         </div>
       </div>
-      <div class="catalog-grid">
+      <p class="catalog-subhead reveal">Festival Category</p>
+      <div class="festival-row">
         <div class="ccard cc-halloween reveal" data-modal="halloween">
           <div class="ccard-overlay"></div>
           <div class="ccard-body">
@@ -1241,6 +1366,52 @@
             </div>
           </div>
         </a>
+      </div>
+
+      <p class="catalog-subhead reveal">Product Category</p>
+      <div class="product-grid">
+        <a href="https://canva.link/j28nq4rmzna7n4e" target="_blank" rel="noopener noreferrer" class="ccard ccard-sm pcard pc-allproduct reveal">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-body">
+            <h3 class="ccard-name">สินค้าทั้งหมด</h3>
+            <span class="ccard-upcoming">ดู Catalog →</span>
+          </div>
+        </a>
+        <div class="ccard ccard-sm pcard pc-festival reveal reveal-delay-1" tabindex="0">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-body">
+            <h3 class="ccard-name">อุปกรณ์ตกแต่งเทศกาลต่างๆ</h3>
+            <span class="ccard-upcoming">Coming Soon</span>
+          </div>
+        </div>
+        <div class="ccard ccard-sm pcard pc-balloon reveal reveal-delay-2" tabindex="0">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-body">
+            <h3 class="ccard-name">ลูกโป่ง</h3>
+            <span class="ccard-upcoming">Coming Soon</span>
+          </div>
+        </div>
+        <div class="ccard ccard-sm pcard pc-clothing reveal reveal-delay-3" tabindex="0">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-body">
+            <h3 class="ccard-name">ชุด ผ้าคลุมและเครื่องสวมใส่</h3>
+            <span class="ccard-upcoming">Coming Soon</span>
+          </div>
+        </div>
+        <div class="ccard ccard-sm pcard pc-accessory reveal reveal-delay-4" tabindex="0">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-body">
+            <h3 class="ccard-name">พร็อพและ Accessory</h3>
+            <span class="ccard-upcoming">Coming Soon</span>
+          </div>
+        </div>
+        <div class="ccard ccard-sm pcard pc-ribbon reveal reveal-delay-5" tabindex="0">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-body">
+            <h3 class="ccard-name">โบว์และอะไหล่</h3>
+            <span class="ccard-upcoming">Coming Soon</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -1435,7 +1606,7 @@
           { icon: '📦', label: 'Catalog รวม',                href: 'https://canva.link/royraanhalloween' },
           { icon: '👻', label: 'หุ่นตกแต่ง',                 href: null },
           { icon: '🕷️', label: 'อุปกรณ์ตกแต่ง',              href: null },
-          { icon: '🎭', label: 'พร๊อพ อุปกรณ์',             href: null },
+          { icon: '🎭', label: 'พร็อพ อุปกรณ์',             href: null },
           { icon: '🎃', label: 'หน้ากาก หมวก เครื่องประดับ', href: null },
           { icon: '👗', label: 'ชุดฮาโลวีน',               href: null },
         ],
@@ -1527,38 +1698,6 @@
       });
     }
 
-    /* ── Magnet particle CTA effect (Catalog nav link) ── */
-    function initMagnetParticles(el, { count = 10, spread = 20 } = {}) {
-      const particles = Array.from({ length: count }, () => {
-        const angle = Math.random() * Math.PI * 2;
-        const dist = spread + Math.random() * spread;
-        const px = Math.cos(angle) * dist;
-        const py = Math.sin(angle) * dist;
-        const span = document.createElement('span');
-        span.className = 'magnet-particle';
-        span.style.setProperty('--px', px + 'px');
-        span.style.setProperty('--py', py + 'px');
-        el.appendChild(span);
-        return { span, px, py };
-      });
-
-      const attract = () => {
-        el.classList.add('magnet-attracting');
-        particles.forEach(p => { p.span.style.setProperty('--px', '0px'); p.span.style.setProperty('--py', '0px'); });
-      };
-      const release = () => {
-        el.classList.remove('magnet-attracting');
-        particles.forEach(p => { p.span.style.setProperty('--px', p.px + 'px'); p.span.style.setProperty('--py', p.py + 'px'); });
-      };
-
-      el.addEventListener('mouseenter', attract);
-      el.addEventListener('mouseleave', release);
-      el.addEventListener('touchstart', attract, { passive: true });
-      el.addEventListener('touchend', release);
-    }
-
-    const navCatalogMagnet = document.getElementById('nav-catalog-magnet');
-    if (navCatalogMagnet) initMagnetParticles(navCatalogMagnet);
   </script>
 
   <!-- Leaflet JS -->
@@ -1635,9 +1774,10 @@
       }, 2200);
     })();
 
-    /* ── 3D tilt on catalog cards ── */
+    /* ── 3D tilt on catalog cards (festival row only — product cards use a CSS scale/blur reveal instead) ── */
     (function() {
       document.querySelectorAll('.ccard').forEach(card => {
+        if (card.closest('.product-grid')) return;
         card.style.transformStyle = 'preserve-3d';
         card.addEventListener('mousemove', (e) => {
           const r = card.getBoundingClientRect();
@@ -1649,6 +1789,14 @@
         card.addEventListener('mouseleave', () => {
           card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
         });
+      });
+    })();
+
+    /* ── Product Category placeholder cards: tap/click reveals "Coming Soon" (hover already does on desktop) ── */
+    (function() {
+      document.querySelectorAll('.product-grid .ccard').forEach(card => {
+        if (card.tagName === 'A') return; // real links (e.g. "สินค้าทั้งหมด") just navigate
+        card.addEventListener('click', () => card.classList.toggle('is-active'));
       });
     })();
 
