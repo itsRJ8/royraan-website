@@ -576,7 +576,8 @@
     .ccard-sm .ccard-name { font-size: 15px; }
 
     /* Group-hover reveal: hovering/focusing/clicking one product card highlights it
-       and de-emphasises the rest of the grid (scale down + dim + blur). */
+       and de-emphasises the rest of the grid (scale down + dim + blur). Desktop only —
+       cancelled again below in the mobile breakpoint. */
     .product-grid .ccard {
       transition: transform .5s cubic-bezier(0.2, 0.8, 0.3, 1), opacity .5s ease, filter .5s ease, box-shadow .18s ease;
     }
@@ -730,7 +731,8 @@
     .pc-accessory::before  { background-image: url('Card Image/Accesories.png'); }
     .pc-ribbon::before     { background-image: url('Card Image/Ribbon.png'); }
 
-    /* Swap to a plain orange background on hover/focus/tap so the text stays legible */
+    /* Swap to a plain orange background on hover/focus/tap so the text stays legible.
+       Desktop only — cancelled again below in the mobile breakpoint. */
     .pcard:hover::before,
     .pcard:focus-visible::before,
     .pcard.is-active::before {
@@ -1094,17 +1096,30 @@
 
       .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
       .product-grid .ccard-sm { padding: 10px; }
-      /* no hover on touch — show product name + status stacked, always visible */
-      .pcard .ccard-body { display: flex; flex-direction: column; gap: 3px; }
-      .pcard .ccard-name,
-      .pcard .ccard-upcoming {
-        grid-area: auto;
-        position: static;
-        opacity: 1 !important;
+      /* no hover on touch — name shown by default; tap crossfades to a large
+         "Coming Soon" / "ดู Catalog →" message in its place (same stacked-overlay
+         trick as desktop, so the hidden line doesn't leave blank space) */
+      .pcard .ccard-name { font-size: 14px; font-weight: 700; opacity: 1 !important; }
+      .pcard .ccard-upcoming { font-size: 22px; opacity: 0 !important; }
+      .pcard.is-active .ccard-name { opacity: 0 !important; }
+      .pcard.is-active .ccard-upcoming { opacity: 1 !important; }
+      /* the desktop-only hover polish (scale/dim siblings, orange background swap) is
+         unneeded here — content is already always visible — so it's cancelled below;
+         !important is required to beat the desktop rules' own !important declarations */
+      .product-grid:hover .ccard,
+      .product-grid .ccard:hover,
+      .product-grid .ccard:focus-visible,
+      .product-grid .ccard.is-active {
         transform: none !important;
+        opacity: 1 !important;
+        filter: none !important;
       }
-      .pcard .ccard-name { font-size: 12px; font-weight: 700; }
-      .pcard .ccard-upcoming { font-size: 9px; }
+      .pcard.pc-allproduct::before { background-image: url('Card Image/สินค้าทั้งหมด.png') !important; }
+      .pcard.pc-festival::before   { background-image: url('Card Image/Festival Decoration.png') !important; }
+      .pcard.pc-balloon::before    { background-image: url('Card Image/Balloon.png') !important; }
+      .pcard.pc-clothing::before   { background-image: url('Card Image/Clothing.png') !important; }
+      .pcard.pc-accessory::before  { background-image: url('Card Image/Accesories.png') !important; }
+      .pcard.pc-ribbon::before     { background-image: url('Card Image/Ribbon.png') !important; }
       .catalog-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
       .section-eyebrow { margin-bottom: 10px; }
       .section-title { font-size: 28px; }
