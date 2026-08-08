@@ -505,16 +505,6 @@
       justify-content: space-between;
       margin-bottom: 48px;
     }
-    .catalog-subhead {
-      font-family: var(--fm);
-      font-size: 11px;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      color: var(--n400);
-      margin: 0 0 20px;
-    }
-    .catalog-subhead:not(:first-child) { margin-top: 56px; }
-
     /* Festival Category — horizontal hover-expand row (desktop) */
     .festival-row {
       display: flex;
@@ -543,7 +533,6 @@
     /* Tag / description / CTA are collapsed (zero height, not just invisible) at rest so
        their varying text length can't push the name to a different vertical position
        card to card — they only occupy space once the card expands. */
-    .festival-row .ccard-tag,
     .festival-row .ccard-desc,
     .festival-row .ccard-cta-row {
       opacity: 0;
@@ -555,7 +544,6 @@
       pointer-events: none;
     }
     .festival-row .ccard-cta-row { display: block; }
-    .festival-row .ccard:hover .ccard-tag,
     .festival-row .ccard:hover .ccard-desc,
     .festival-row .ccard:hover .ccard-cta-row {
       opacity: 1;
@@ -563,56 +551,8 @@
       transform: translateY(0);
       pointer-events: auto;
     }
-    .festival-row .ccard:hover .ccard-tag { margin-bottom: 10px; }
     .festival-row .ccard:hover .ccard-desc { margin-bottom: 16px; }
 
-    /* Product Category — smaller card grid (desktop only) */
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
-    }
-    .ccard-sm { padding: 14px; }
-    .ccard-sm .ccard-name { font-size: 15px; }
-
-    /* Group-hover reveal: hovering/focusing/clicking one product card highlights it
-       and de-emphasises the rest of the grid (scale down + dim + blur). Desktop only —
-       cancelled again below in the mobile breakpoint. */
-    .product-grid .ccard {
-      transition: transform .5s cubic-bezier(0.2, 0.8, 0.3, 1), opacity .5s ease, filter .5s ease, box-shadow .18s ease;
-    }
-    .product-grid:hover .ccard { transform: scale(.97); opacity: .6; filter: blur(2px); }
-    .product-grid .ccard:hover,
-    .product-grid .ccard:focus-visible,
-    .product-grid .ccard.is-active {
-      transform: scale(1.05) !important;
-      opacity: 1 !important;
-      filter: none !important;
-      z-index: 2;
-      outline: none;
-    }
-
-    /* Product cards: "Coming Soon" / CTA is the resting state; the product name
-       crossfades in as detail info on hover / keyboard focus / tap. */
-    .pcard { background: #131211; }
-    .pcard .ccard-body { display: grid; }
-    .pcard .ccard-name,
-    .pcard .ccard-upcoming { grid-area: 1 / 1; align-self: end; }
-    .pcard .ccard-name { margin-bottom: 0; opacity: 0; transition: opacity .3s ease; }
-    .pcard .ccard-upcoming {
-      position: static;
-      font-size: 16px;
-      white-space: normal;
-      opacity: 1;
-      transform: none;
-      color: #faf9f5;
-    }
-    .pcard:hover .ccard-name,
-    .pcard:focus-visible .ccard-name,
-    .pcard.is-active .ccard-name { opacity: 1; }
-    .pcard:hover .ccard-upcoming,
-    .pcard:focus-visible .ccard-upcoming,
-    .pcard.is-active .ccard-upcoming { opacity: 0 !important; }
     .ccard {
       position: relative;
       border-radius: 18px;
@@ -644,16 +584,6 @@
     }
     .ccard:hover .ccard-icon { opacity: .22; font-size: 100px; }
     .ccard-body { position: relative; z-index: 1; }
-    .ccard-tag {
-      display: inline-block;
-      font-family: var(--fm);
-      font-size: 9px;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border-radius: 1px;
-      margin-bottom: 10px;
-    }
     .ccard-name {
       font-family: var(--fd);
       font-size: 26px;
@@ -700,12 +630,13 @@
     .ccard:hover .ccard-upcoming { opacity: 1; transform: translateY(0); }
 
     /* card solid-colour fallbacks */
-    .cc-halloween { background: #140a08; }
-    .cc-christmas { background: #060d06; }
-    .cc-valentine { background: #1a0808; }
-    .cc-cny       { background: #1a0303; }
-    .cc-newyear   { background: #0a0a0f; }
-    .cc-material  { background: #0d0d0d; }
+    .cc-allproduct { background: #d97757; }
+    .cc-halloween { background: #d97757; }
+    .cc-christmas { background: #d97757; }
+    .cc-valentine { background: #d97757; }
+    .cc-cny       { background: #d97757; }
+    .cc-newyear   { background: #d97757; }
+    .cc-material  { background: #d97757; }
 
     /* card background images on ::before for zoom */
     .ccard::before {
@@ -718,34 +649,13 @@
       transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.3, 1);
     }
     .ccard:hover::before { transform: scale(1.08); }
-    .cc-halloween::before { background-image: url('Card Image/halloween.JPG'); }
-    .cc-christmas::before { background-image: url('Card Image/christmas.JPG'); }
-    .cc-valentine::before { background-image: url('Card Image/valentine.jpg'); }
-    .cc-cny::before       { background-image: url('Card Image/chinesenewyear.jpg'); }
-    .cc-newyear::before   { background-image: url('Card Image/happynewyear.JPG'); }
-    .cc-material::before  { background-image: url('Card Image/ปัจฉิม.jpg'); }
-    .pc-allproduct::before { background-image: url('Card Image/สินค้าทั้งหมด.png'); }
-    .pc-festival::before   { background-image: url('Card Image/Festival Decoration.png'); }
-    .pc-balloon::before    { background-image: url('Card Image/Balloon.png'); }
-    .pc-clothing::before   { background-image: url('Card Image/Clothing.png'); }
-    .pc-accessory::before  { background-image: url('Card Image/Accesories.png'); }
-    .pc-ribbon::before     { background-image: url('Card Image/Ribbon.png'); }
-
-    /* Swap to a plain orange background on hover/focus/tap so the text stays legible.
-       Desktop only — cancelled again below in the mobile breakpoint. */
-    .pcard:hover::before,
-    .pcard:focus-visible::before,
-    .pcard.is-active::before {
-      background-image: url('Card Image/Detail.png');
-    }
-
-    /* tag colours */
-    .cc-halloween .ccard-tag { background: #f2c9b8; color: #a84e2e; }
-    .cc-christmas .ccard-tag { background: #c8e0c8; color: #2D6A2D; }
-    .cc-valentine .ccard-tag { background: #f7dfe8; color: #8f3558; }
-    .cc-cny .ccard-tag       { background: #fde8c0; color: #9a3300; }
-    .cc-newyear .ccard-tag   { background: #f4f3f0; color: #68686a; }
-    .cc-material .ccard-tag  { background: #f0ede4; color: #7a7870; }
+    .cc-allproduct::before { background-image: url('Card Image/WC_AllProduct.png'); }
+    .cc-halloween::before { background-image: url('Card Image/WC_Halloween.png'); }
+    .cc-christmas::before { background-image: url('Card Image/WC_Christmas.png'); }
+    .cc-valentine::before { background-image: url('Card Image/WC_Valentine.png'); }
+    .cc-cny::before       { background-image: url('Card Image/WC_Chinese New Year.png'); }
+    .cc-newyear::before   { background-image: url('Card Image/WC_Headwear & Orientation.png'); }
+    .cc-material::before  { background-image: url('Card Image/WC_Ribbon.png'); }
 
     /* ══ Modal Category Buttons ══ */
     .modal-categories { display: none; flex-direction: column; gap: 8px; }
@@ -753,19 +663,32 @@
     .modal-cat-btn {
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       width: 100%;
       padding: 12px 16px;
       border-radius: 8px;
-      border: var(--border);
+      border: 0.5px solid var(--orange);
       background: none;
       font-size: 13px;
       letter-spacing: 0.01em;
       text-decoration: none;
       text-align: left;
-      transition: background 0.15s;
+      transition: background 0.15s, color 0.15s;
     }
-    a.modal-cat-btn { color: var(--light); cursor: pointer; }
-    a.modal-cat-btn:hover, a.modal-cat-btn:active { color: var(--orange); background: rgba(128,128,128,0.07); }
+    .modal-cat-th { flex: 1 1 auto; min-width: 0; }
+    .modal-cat-en {
+      flex: 0 0 auto;
+      font-family: var(--fm);
+      font-size: 9px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: inherit;
+      opacity: .7;
+      white-space: nowrap;
+    }
+    a.modal-cat-btn { background: var(--orange); color: var(--light); cursor: pointer; }
+    a.modal-cat-btn:hover, a.modal-cat-btn:active { color: var(--orange); background: #fff; }
     button.modal-cat-btn { color: var(--n800); cursor: default; }
 
     /* ════ MARQUEE STRIP ════ */
@@ -1086,47 +1009,18 @@
       .catalog { padding: 40px 0; }
       .festival-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; height: auto; }
       .festival-row .ccard { flex: none; }
-      /* no hover on touch — keep name/tag/desc/CTA always visible, same as before */
+      /* no hover on touch — keep name/desc/CTA always visible, same as before */
       .festival-row .ccard-name { font-size: 20px; font-weight: 700; }
-      .festival-row .ccard-tag,
       .festival-row .ccard-desc,
       .festival-row .ccard-cta-row { opacity: 1; max-height: none; transform: none; pointer-events: auto; }
-      .festival-row .ccard-tag { margin-bottom: 6px; }
       .festival-row .ccard-desc { margin-bottom: 10px; }
 
-      .product-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-      .product-grid .ccard-sm { padding: 10px; }
-      /* no hover on touch — name shown by default; tap crossfades to a large
-         "Coming Soon" / "ดู Catalog →" message in its place (same stacked-overlay
-         trick as desktop, so the hidden line doesn't leave blank space) */
-      .pcard .ccard-name { font-size: 14px; font-weight: 700; opacity: 1 !important; }
-      .pcard .ccard-upcoming { font-size: 22px; opacity: 0 !important; }
-      .pcard.is-active .ccard-name { opacity: 0 !important; }
-      .pcard.is-active .ccard-upcoming { opacity: 1 !important; }
-      /* the desktop-only hover polish (scale/dim siblings, orange background swap) is
-         unneeded here — content is already always visible — so it's cancelled below;
-         !important is required to beat the desktop rules' own !important declarations */
-      .product-grid:hover .ccard,
-      .product-grid .ccard:hover,
-      .product-grid .ccard:focus-visible,
-      .product-grid .ccard.is-active {
-        transform: none !important;
-        opacity: 1 !important;
-        filter: none !important;
-      }
-      .pcard.pc-allproduct::before { background-image: url('Card Image/สินค้าทั้งหมด.png') !important; }
-      .pcard.pc-festival::before   { background-image: url('Card Image/Festival Decoration.png') !important; }
-      .pcard.pc-balloon::before    { background-image: url('Card Image/Balloon.png') !important; }
-      .pcard.pc-clothing::before   { background-image: url('Card Image/Clothing.png') !important; }
-      .pcard.pc-accessory::before  { background-image: url('Card Image/Accesories.png') !important; }
-      .pcard.pc-ribbon::before     { background-image: url('Card Image/Ribbon.png') !important; }
       .catalog-header { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
       .section-eyebrow { margin-bottom: 10px; }
       .section-title { font-size: 28px; }
       .ccard { padding: 14px; }
       .ccard-name { font-size: 20px; }
       .ccard-desc { font-size: 10px; margin-bottom: 10px; line-height: 1.5; }
-      .ccard-tag { font-size: 8px; padding: 2px 6px; margin-bottom: 6px; }
       .ccard-icon { font-size: 64px; }
       .ccard-upcoming { font-size: 22px; }
 
@@ -1173,7 +1067,6 @@
     /* Small mobile */
     @media (max-width: 480px) {
       .festival-row { grid-template-columns: 1fr; }
-      .product-grid { grid-template-columns: repeat(2, 1fr); }
       .hero-actions { grid-template-columns: 1fr 1fr; }
       .social-grid { grid-template-columns: 1fr 1fr; }
 
@@ -1307,12 +1200,21 @@
           <h2 class="section-title reveal reveal-delay-1">Catalog สินค้า</h2>
         </div>
       </div>
-      <p class="catalog-subhead reveal">Festival Category</p>
       <div class="festival-row">
+        <a href="https://canva.link/j28nq4rmzna7n4e" target="_blank" rel="noopener noreferrer" class="ccard cc-allproduct reveal">
+          <div class="ccard-overlay"></div>
+          <div class="ccard-body">
+            <h3 class="ccard-name">สินค้าทั้งหมด</h3>
+            <p class="ccard-desc">รวมสินค้าทุกหมวดหมู่ · Catalog ครบจบในที่เดียว</p>
+            <div class="ccard-cta-row">
+              <span class="ccard-cta">ดู Catalog →</span>
+              <span class="ccard-upcoming">See Product</span>
+            </div>
+          </div>
+        </a>
         <div class="ccard cc-halloween reveal" data-modal="halloween">
           <div class="ccard-overlay"></div>
           <div class="ccard-body">
-            <span class="ccard-tag">Halloween</span>
             <h3 class="ccard-name">Halloween</h3>
             <p class="ccard-desc">ฟักทอง · แมงมุม · กระดูก · ของตกแต่งสยองขวัญ</p>
             <div class="ccard-cta-row">
@@ -1324,9 +1226,8 @@
         <div class="ccard cc-christmas reveal reveal-delay-1" data-modal="christmas">
           <div class="ccard-overlay"></div>
           <div class="ccard-body">
-            <span class="ccard-tag">Christmas</span>
             <h3 class="ccard-name">Christmas</h3>
-            <p class="ccard-desc">ต้นคริสต์มาส · ลูกโลก · ริบบิ้น · หิมะเทียม</p>
+            <p class="ccard-desc">ต้นคริสต์มาส · การ์แลนด์ · หุ่นคริสต์มาส · ลูกบอลคริสต์มาส · ชุด ผ้าคลุม</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
               <span class="ccard-upcoming">See Product</span>
@@ -1336,97 +1237,47 @@
         <a href="#" class="ccard cc-valentine reveal reveal-delay-2" data-modal="valentine">
           <div class="ccard-overlay"></div>
           <div class="ccard-body">
-            <span class="ccard-tag">Valentine</span>
             <h3 class="ccard-name">Valentine</h3>
             <p class="ccard-desc">หัวใจ · ดอกไม้ · ริบบิ้น · บอลลูนวาเลนไทน์</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
-              <span class="ccard-upcoming">Upcoming</span>
+              <span class="ccard-upcoming">Coming Soon</span>
             </div>
           </div>
         </a>
         <a href="#" class="ccard cc-cny reveal reveal-delay-1" data-modal="cny">
           <div class="ccard-overlay"></div>
           <div class="ccard-body">
-            <span class="ccard-tag">Chinese New Year</span>
             <h3 class="ccard-name">Chinese New Year</h3>
             <p class="ccard-desc">โคมไฟ · ซองแดง · ดอกเหมย · ของตกแต่งตรุษจีน</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
-              <span class="ccard-upcoming">Upcoming</span>
+              <span class="ccard-upcoming">Coming Soon</span>
             </div>
           </div>
         </a>
         <a href="#" class="ccard cc-newyear reveal reveal-delay-2" data-modal="newyear">
           <div class="ccard-overlay"></div>
           <div class="ccard-body">
-            <span class="ccard-tag">New Year</span>
-            <h3 class="ccard-name">New Year</h3>
-            <p class="ccard-desc">ดาว · แชมเปญ · บอลลูนปีใหม่ · ของตกแต่งฉลอง</p>
+            <h3 class="ccard-name">อุปกรณ์สวมหัว และ งานปัจฉิม</h3>
+            <p class="ccard-desc">หมวก · วิ้ก · สายสะพายปัจฉิม</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
-              <span class="ccard-upcoming">Upcoming</span>
+              <span class="ccard-upcoming">Coming Soon</span>
             </div>
           </div>
         </a>
         <a href="#" class="ccard cc-material reveal reveal-delay-3" data-modal="material">
           <div class="ccard-overlay"></div>
           <div class="ccard-body">
-            <span class="ccard-tag">วัตถุดิบ & งานปัจฉิม</span>
-            <h3 class="ccard-name">วัตถุดิบ & งานปัจฉิม</h3>
-            <p class="ccard-desc">ริบบิ้น · ดอกไม้ปลอม · ฉากถ่ายรูป · โบว์ · วัสดุตกแต่ง</p>
+            <h3 class="ccard-name">งานริบบิ้นและโบว์</h3>
+            <p class="ccard-desc">งานริบบิ้นทั้งแบบม้วนและแบบโบว์ทั้งหมด</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
-              <span class="ccard-upcoming">Upcoming</span>
+              <span class="ccard-upcoming">Coming Soon</span>
             </div>
           </div>
         </a>
-      </div>
-
-      <p class="catalog-subhead reveal">Product Category</p>
-      <div class="product-grid">
-        <a href="https://canva.link/j28nq4rmzna7n4e" target="_blank" rel="noopener noreferrer" class="ccard ccard-sm pcard pc-allproduct reveal">
-          <div class="ccard-overlay"></div>
-          <div class="ccard-body">
-            <h3 class="ccard-name">สินค้าทั้งหมด</h3>
-            <span class="ccard-upcoming">ดู Catalog →</span>
-          </div>
-        </a>
-        <div class="ccard ccard-sm pcard pc-festival reveal reveal-delay-1" tabindex="0">
-          <div class="ccard-overlay"></div>
-          <div class="ccard-body">
-            <h3 class="ccard-name">อุปกรณ์ตกแต่งเทศกาลต่างๆ</h3>
-            <span class="ccard-upcoming">Coming Soon</span>
-          </div>
-        </div>
-        <div class="ccard ccard-sm pcard pc-balloon reveal reveal-delay-2" tabindex="0">
-          <div class="ccard-overlay"></div>
-          <div class="ccard-body">
-            <h3 class="ccard-name">ลูกโป่ง</h3>
-            <span class="ccard-upcoming">Coming Soon</span>
-          </div>
-        </div>
-        <div class="ccard ccard-sm pcard pc-clothing reveal reveal-delay-3" tabindex="0">
-          <div class="ccard-overlay"></div>
-          <div class="ccard-body">
-            <h3 class="ccard-name">ชุด ผ้าคลุมและเครื่องสวมใส่</h3>
-            <span class="ccard-upcoming">Coming Soon</span>
-          </div>
-        </div>
-        <div class="ccard ccard-sm pcard pc-accessory reveal reveal-delay-4" tabindex="0">
-          <div class="ccard-overlay"></div>
-          <div class="ccard-body">
-            <h3 class="ccard-name">พร็อพและ Accessory</h3>
-            <span class="ccard-upcoming">Coming Soon</span>
-          </div>
-        </div>
-        <div class="ccard ccard-sm pcard pc-ribbon reveal reveal-delay-5" tabindex="0">
-          <div class="ccard-overlay"></div>
-          <div class="ccard-body">
-            <h3 class="ccard-name">โบว์และอะไหล่</h3>
-            <span class="ccard-upcoming">Coming Soon</span>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -1618,12 +1469,12 @@
         icon: '🎃', eyebrow: 'Season 01 · Halloween', title: 'Halloween',
         desc: 'ของตกแต่งสยองขวัญครบครัน ฟักทอง แมงมุม กระดูก และอีกกว่า 300 SKU สำหรับร้านค้า event organizer และ florist',
         categories: [
-          { icon: '📦', label: 'Catalog รวม',                href: 'https://canva.link/royraanhalloween' },
-          { icon: '👻', label: 'หุ่นตกแต่ง',                 href: null },
-          { icon: '🕷️', label: 'อุปกรณ์ตกแต่ง',              href: null },
-          { icon: '🎭', label: 'พร็อพ อุปกรณ์',             href: null },
-          { icon: '🎃', label: 'หน้ากาก หมวก เครื่องประดับ', href: null },
-          { icon: '👗', label: 'ชุดฮาโลวีน',               href: null },
+          { label: 'รวมสินค้า Halloween',   labelEn: 'All Halloween Product',   href: 'https://canva.link/fe0ctteqcz0ny2e' },
+          { label: 'หุ่นและอุปกรณ์ตกแต่ง',    labelEn: 'Animatronics & Decoration', href: 'https://canva.link/3uagk2kuqogyq12' },
+          { label: 'ลูกโป่ง และ ม่าน',        labelEn: 'Balloon & Sign',           href: 'https://canva.link/y0hzc0hm7eqa65w' },
+          { label: 'พร็อพตกแต่ง',            labelEn: 'Prop & Cosmetics',         href: 'https://canva.link/6kf63m4af9ddpc9' },
+          { label: 'หน้ากาก',                labelEn: 'Mask',                     href: 'https://canva.link/65q1cxe3esj4we7' },
+          { label: 'ชุด และ ผ้าคลุม',         labelEn: 'Costume & Wearable',       href: 'https://canva.link/vuwfeezaajk60tu' },
         ],
       },
       christmas: {
@@ -1641,8 +1492,8 @@
       },
       valentine: { icon: '🌹', eyebrow: 'Season 03 · Valentine', title: 'Valentine', desc: 'หัวใจ ดอกไม้ ริบบิ้น บอลลูนวาเลนไทน์ และของตกแต่งแห่งความรัก สำหรับทั้ง B2B และ B2C' },
       cny:       { icon: '🧧', eyebrow: 'Season 04 · Chinese New Year', title: 'Chinese New Year', desc: 'โคมไฟ ซองแดง ดอกเหมย และของตกแต่งตรุษจีนครบครัน สำหรับร้านค้า ร้านอาหาร และ event organizer' },
-      newyear:   { icon: '🎆', eyebrow: 'Season 05 · New Year', title: 'New Year', desc: 'ดาว แชมเปญ บอลลูนปีใหม่ และของตกแต่งงานฉลองต้อนรับปีใหม่ ครบทุก style' },
-      material:  { icon: '🎀', eyebrow: 'วัตถุดิบ & งานปัจฉิม · Craft Supplies', title: 'วัตถุดิบ & งานปัจฉิม', desc: 'ริบบิ้น ดอกไม้ปลอม ลวด ฉากถ่ายรูป โบว์ และวัสดุตกแต่งพื้นฐานสำหรับ florist งานรับปริญญา และ event' },
+      newyear:   { icon: '🎆', eyebrow: 'Season 05 · อุปกรณ์สวมหัว และ งานปัจฉิม', title: 'อุปกรณ์สวมหัว และ งานปัจฉิม', desc: 'หมวก วิ้ก และ สายสะพายปัจฉิม' },
+      material:  { icon: '🎀', eyebrow: 'งานริบบิ้นและโบว์ · Ribbon Supplies', title: 'งานริบบิ้นและโบว์', desc: 'งานริบบิ้นทั้งแบบม้วนและแบบโบว์ทั้งหมด' },
     };
 
     const backdrop = document.getElementById('modal-backdrop');
@@ -1665,11 +1516,13 @@
       categories.innerHTML = '';
 
       if (d.categories && d.categories.length) {
-        categories.innerHTML = d.categories.map(cat =>
-          cat.href
-            ? `<a class="modal-cat-btn" href="${cat.href}" target="_blank" rel="noopener noreferrer">${cat.label}</a>`
-            : `<button class="modal-cat-btn" type="button">${cat.label}</button>`
-        ).join('');
+        categories.innerHTML = d.categories.map(cat => {
+          const inner = `<span class="modal-cat-th">${cat.label}</span>` +
+            (cat.labelEn ? `<span class="modal-cat-en">${cat.labelEn}</span>` : '');
+          return cat.href
+            ? `<a class="modal-cat-btn" href="${cat.href}" target="_blank" rel="noopener noreferrer">${inner}</a>`
+            : `<button class="modal-cat-btn" type="button">${inner}</button>`;
+        }).join('');
         categories.classList.add('show');
       } else if (d.hasLink) {
         actions.style.display = '';
@@ -1789,10 +1642,9 @@
       }, 2200);
     })();
 
-    /* ── 3D tilt on catalog cards (festival row only — product cards use a CSS scale/blur reveal instead) ── */
+    /* ── 3D tilt on catalog cards ── */
     (function() {
       document.querySelectorAll('.ccard').forEach(card => {
-        if (card.closest('.product-grid')) return;
         card.style.transformStyle = 'preserve-3d';
         card.addEventListener('mousemove', (e) => {
           const r = card.getBoundingClientRect();
@@ -1804,14 +1656,6 @@
         card.addEventListener('mouseleave', () => {
           card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
         });
-      });
-    })();
-
-    /* ── Product Category placeholder cards: tap/click reveals "Coming Soon" (hover already does on desktop) ── */
-    (function() {
-      document.querySelectorAll('.product-grid .ccard').forEach(card => {
-        if (card.tagName === 'A') return; // real links (e.g. "สินค้าทั้งหมด") just navigate
-        card.addEventListener('click', () => card.classList.toggle('is-active'));
       });
     })();
 
