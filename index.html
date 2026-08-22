@@ -555,21 +555,49 @@
     .festival-row .ccard:hover .ccard-desc { margin-bottom: 16px; }
 
     /* ─── HIGHLIGHTED CARD (Halloween "New") ─── */
+    @property --halloween-beam-angle {
+      syntax: '<angle>';
+      inherits: false;
+      initial-value: 0deg;
+    }
     .ccard-highlight-wrap {
       position: relative;
     }
     .ccard-highlight-wrap .ccard { width: 100%; height: 100%; }
     .ccard-highlight-wrap .cc-halloween {
-      border: 3px solid var(--light);
+      border: 2px solid #faf9f5;
     }
     body.light-mode .ccard-highlight-wrap .cc-halloween {
       border-color: var(--purple-d);
     }
+    .ccard-highlight-wrap .cc-halloween::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      border-radius: inherit;
+      padding: 2px;
+      pointer-events: none;
+      background: conic-gradient(from var(--halloween-beam-angle),
+        transparent 0deg, transparent 270deg, #faf9f5 330deg, #faf9f5 360deg);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      animation: ccard-halloween-beam 4.5s linear infinite;
+    }
+    body.light-mode .ccard-highlight-wrap .cc-halloween::after {
+      background: conic-gradient(from var(--halloween-beam-angle),
+        transparent 0deg, transparent 270deg, var(--purple-d) 330deg, var(--purple-d) 360deg);
+    }
+    @keyframes ccard-halloween-beam {
+      to { --halloween-beam-angle: 360deg; }
+    }
     .festival-row .ccard-highlight-wrap {
-      flex: 1 1 0;
+      flex: 1.3 1 0;
       transition: flex-grow .5s cubic-bezier(0.2, 0.8, 0.3, 1);
     }
-    .festival-row .ccard-highlight-wrap:hover { flex-grow: 4; }
+    .festival-row .ccard-highlight-wrap:hover { flex-grow: 6; }
     .ccard-badge {
       position: absolute;
       top: 0; left: 50%;
@@ -1113,6 +1141,15 @@
       .festival-row { grid-template-columns: 1fr; }
       .hero-actions { grid-template-columns: 1fr 1fr; }
       .social-grid { grid-template-columns: 1fr 1fr; }
+
+      /* Highlighted card stands out with extra height instead of extra width here (single column).
+         min-height (not aspect-ratio) so it adds on top of the normal content-driven card
+         height instead of replacing it; vw-based so the boost stays ~30%/50% across widths. */
+      .festival-row .ccard-highlight-wrap .cc-halloween {
+        min-height: 34vw;
+        transition: min-height .35s ease;
+      }
+      .festival-row .ccard-highlight-wrap:hover .cc-halloween { min-height: 40vw; }
 
       /* Stack stats vertically on very small screens */
       .stats-inner { grid-template-columns: 1fr; }
