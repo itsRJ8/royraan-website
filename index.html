@@ -208,6 +208,16 @@
     }
     .pill-nav li.hovered a { color: #fff; }
     .pill-nav li a.nav-catalog { font-weight: 900; font-size: 12px; }
+    /* TPF_Catalog Nanno lettering as the label (mask, so it follows the link colour and hover state) */
+    .nav-catalog-word {
+      display: block;
+      height: 22px;
+      margin: -4px 0;
+      aspect-ratio: 2.361;
+      background: currentColor;
+      -webkit-mask: url('Features Section/web/title-catalog-nanno.png') center / contain no-repeat;
+      mask: url('Features Section/web/title-catalog-nanno.png') center / contain no-repeat;
+    }
     .nav-cursor {
       position: absolute;
       top: 4px;
@@ -897,6 +907,7 @@
       .pill-nav li { flex: 1; }
       .pill-nav li a { padding: 16px 4px; text-align: center; font-size: 11px; letter-spacing: .1em; }
       .pill-nav li a.nav-catalog { font-size: 12px; }
+      .nav-catalog-word { margin: -4px auto; height: 24px; }
       /* A tap leaves focus on the link; keep the ring for keyboard users only */
       .pill-nav li a { -webkit-tap-highlight-color: transparent; }
       .pill-nav li a:focus:not(:focus-visible) { outline: none; }
@@ -995,7 +1006,7 @@
   <div class="floating-nav" id="floating-nav">
     <ul class="pill-nav" id="pill-nav">
       <li><a data-scroll-slow href="#intro">Home</a></li>
-      <li><a data-scroll-slow href="#catalog" class="nav-catalog">Catalog</a></li>
+      <li><a data-scroll-slow href="#catalog" class="nav-catalog"><span class="nav-catalog-word"></span><span class="feature-title-text">Catalog</span></a></li>
       <li><a data-scroll-slow href="#contact">ติดต่อเรา</a></li>
       <li><a data-scroll-slow href="#location">Location</a></li>
       <span class="nav-cursor" id="nav-cursor"></span>
