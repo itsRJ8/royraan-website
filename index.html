@@ -358,6 +358,30 @@
       .intro-layer-logo { top: 72px; }
       .intro-section { --intro-quote-w: 77.4vw; }
       .intro-stack { gap: 28px; }
+
+      /* Portrait screens: shrink the photo to 75% of the screen height instead of cover, so more of
+         its width (the blurred crowd on both sides) stays in view. Layers are 117.5% of the section,
+         so 75% of the screen = 63.83% of a layer; 70.6% vertical position centres the photo on screen
+         at scroll 0. The band fade softens the photo's top and bottom edges into the background. */
+      .intro-section {
+        --intro-img-h: 63.83%;
+        --intro-img-y: 70.6%;
+        --intro-band-fade: linear-gradient(to bottom, transparent 25.5%, #000 33%, #000 82%, transparent 89.4%);
+      }
+      .intro-layer-img {
+        background-size: 100% 100%, auto var(--intro-img-h);
+        background-position: 0 0, 50% var(--intro-img-y);
+      }
+      .intro-bg {
+        -webkit-mask: var(--intro-band-fade);
+        mask: var(--intro-band-fade);
+      }
+      .intro-layer-cutout {
+        -webkit-mask: var(--layer-src) 50% var(--intro-img-y) / auto var(--intro-img-h) no-repeat, var(--intro-band-fade);
+        -webkit-mask-composite: source-in;
+        mask: var(--layer-src) 50% var(--intro-img-y) / auto var(--intro-img-h) no-repeat, var(--intro-band-fade);
+        mask-composite: intersect;
+      }
     }
 
     /* Lenis drives the scroll itself, so native smooth scrolling must stay off (no html scroll-behavior: smooth):
