@@ -47,6 +47,7 @@
     body.light-mode header.scrolled { background: rgba(250,249,245,0.98); }
     body.light-mode .scard { background: #f0ede4; }
     body.light-mode .modal { background: #f0ede4; }
+    body.light-mode .modal-upcoming-word { background: #1a1917; }
     body.light-mode footer { background: #f0ede4; }
     body.light-mode .footer-tagline { color: #7a7870; }
     body.light-mode .footer-col-label { color: #7a7870; }
@@ -512,7 +513,7 @@
     }
     .festival-row .ccard:hover .ccard-desc { margin-bottom: 16px; }
 
-    /* ─── HIGHLIGHTED CARD (Christmas "Up Coming") ─── */
+    /* ─── HIGHLIGHTED CARD (Christmas "New") ─── */
     @property --halloween-beam-angle {
       syntax: '<angle>';
       inherits: false;
@@ -656,6 +657,14 @@
       pointer-events: none;
     }
     .ccard:hover .ccard-upcoming { opacity: 1; transform: translateY(0); }
+    /* TP_Up Coming lettering as the hover label (mask, so it takes the on-xmas-red colour) */
+    .ccard-upcoming-img {
+      height: 40px;
+      width: 141px; /* 588 : 167 */
+      background: var(--on-xmas-red);
+      -webkit-mask: url('Card Image/TP_Up Coming-trim.png') left center / contain no-repeat;
+      mask: url('Card Image/TP_Up Coming-trim.png') left center / contain no-repeat;
+    }
 
     /* card solid-colour fallbacks */
     .cc-allproduct { background: var(--xmas-red); }
@@ -896,21 +905,25 @@
     .modal-desc { font-size: 13px; color: var(--n400); line-height: 1.8; margin-bottom: 28px; }
     .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
     .modal-icon { font-size: 56px; margin-bottom: 20px; }
+    /* Upcoming state: TP_Up Coming lettering, large, white, centred in the modal (no box, no dot) */
     .modal-upcoming-badge {
       display: none;
+      justify-content: center;
       align-items: center;
-      gap: 10px;
-      padding: 12px 24px;
-      border: 0.5px solid var(--orange);
-      border-radius: var(--r);
-      font-family: var(--fd);
-      font-size: 26px;
-      font-weight: 300;
-      font-style: italic;
-      color: var(--orange);
-      align-self: flex-start;
+      width: 100%;
+      margin-top: 8px;
+      align-self: stretch;
     }
-    .modal-upcoming-badge.show { display: inline-flex; }
+    .modal-upcoming-badge.show { display: flex; }
+    /* TP_Up Coming lettering in place of the "Upcoming" text (mask, so it takes the badge colour) */
+    .modal-upcoming-word {
+      display: block;
+      height: 67px;
+      width: min(237px, 100%); /* 588 : 167 */
+      background: #fff;
+      -webkit-mask: url('Card Image/TP_Up Coming-trim.png') center / contain no-repeat;
+      mask: url('Card Image/TP_Up Coming-trim.png') center / contain no-repeat;
+    }
     .modal-upcoming-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); opacity: .5; flex-shrink: 0; }
 
     /* ════ RESPONSIVE ════ */
@@ -967,6 +980,7 @@
       .ccard-desc { font-size: 10px; margin-bottom: 10px; line-height: 1.5; }
       .ccard-icon { font-size: 64px; }
       .ccard-upcoming { font-size: 22px; }
+      .ccard-upcoming-img { height: 32px; width: 113px; }
 
       /* Social */
       .social-section { padding: 40px 0; }
@@ -1001,7 +1015,7 @@
       .modal-icon { font-size: 40px; margin-bottom: 12px; }
       .modal-desc { font-size: 12px; margin-bottom: 20px; }
       .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-      .modal-upcoming-badge { font-size: 22px; padding: 10px 20px; }
+      .modal-upcoming-word { height: 45px; width: min(158px, 100%); }
 
       /* Mono / utility */
       .mono { font-size: 9px; }
@@ -1174,7 +1188,7 @@
           </div>
         </div>
         <div class="ccard-highlight-wrap">
-          <span class="ccard-badge">Up Coming</span>
+          <span class="ccard-badge">New</span>
           <div class="ccard cc-christmas reveal reveal-delay-1" data-modal="christmas">
             <div class="ccard-overlay"></div>
             <div class="ccard-body">
@@ -1194,7 +1208,7 @@
             <p class="ccard-desc">หัวใจ · ดอกไม้ · ริบบิ้น · บอลลูนวาเลนไทน์</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
-              <span class="ccard-upcoming">Coming Soon</span>
+              <span class="ccard-upcoming ccard-upcoming-img" role="img" aria-label="Up Coming"></span>
             </div>
           </div>
         </a>
@@ -1205,7 +1219,7 @@
             <p class="ccard-desc">โคมไฟ · ซองแดง · ดอกเหมย · ของตกแต่งตรุษจีน</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
-              <span class="ccard-upcoming">Coming Soon</span>
+              <span class="ccard-upcoming ccard-upcoming-img" role="img" aria-label="Up Coming"></span>
             </div>
           </div>
         </a>
@@ -1216,7 +1230,7 @@
             <p class="ccard-desc">หมวก · วิ้ก · สายสะพายปัจฉิม</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
-              <span class="ccard-upcoming">Coming Soon</span>
+              <span class="ccard-upcoming ccard-upcoming-img" role="img" aria-label="Up Coming"></span>
             </div>
           </div>
         </a>
@@ -1227,7 +1241,7 @@
             <p class="ccard-desc">งานริบบิ้นทั้งแบบม้วนและแบบโบว์ทั้งหมด</p>
             <div class="ccard-cta-row">
               <span class="ccard-cta">ดู Catalog →</span>
-              <span class="ccard-upcoming">Coming Soon</span>
+              <span class="ccard-upcoming ccard-upcoming-img" role="img" aria-label="Up Coming"></span>
             </div>
           </div>
         </a>
@@ -1340,8 +1354,7 @@
         <a href="#contact" class="btn btn-outline" id="modal-cta-secondary">ติดต่อสั่งซื้อ</a>
       </div>
       <div class="modal-upcoming-badge" id="modal-upcoming">
-        <span class="modal-upcoming-dot"></span>
-        Upcoming
+        <span class="modal-upcoming-word" role="img" aria-label="Up Coming"></span>
       </div>
       <div class="modal-categories" id="modal-categories"></div>
     </div>
@@ -1478,12 +1491,11 @@
         desc: 'ต้นคริสต์มาส ลูกโลก ริบบิ้น หิมะเทียม และของตกแต่งช่วงเทศกาลครบวงจร',
         categories: [
           { icon: '📦', label: 'Catalog รวม',                  href: 'https://canva.link/3z75m5dlgoeqseu' },
-          { icon: '🎈', label: 'หุ่นเป่าลม & Animatronics', href: null },
-          { icon: '🎄', label: 'ต้นไม้',                        href: null },
-          { icon: '🎗️', label: 'Garland หรีด เส้นสายรุ้ง',      href: null },
-          { icon: '✨', label: 'อุปกรณ์และประดับตกแต่ง',        href: null },
-          { icon: '🎊', label: 'ลูกโป่งทุกแบบ',                 href: null },
-          { icon: '🧥', label: 'ชุด เสื้อคลุม หมวก',            href: null },
+          { icon: '🎈', label: 'หุ่นเป่าลม & Animatronics', href: 'https://canva.link/iks0qkmoh80i9jl' },
+          { icon: '🎄', label: 'ต้นไม้ Garland หรีด และเส้นสายรุ้ง', href: 'https://canva.link/ya0a7f3ertz1uky' },
+          { icon: '✨', label: 'อุปกรณ์และประดับตกแต่ง',        href: 'https://canva.link/mc3ndhv2ecfmz4d' },
+          { icon: '🎊', label: 'ลูกโป่ง',                        href: 'https://canva.link/4ojregju0s1iazo' },
+          { icon: '🧥', label: 'ชุด เสื้อคลุม หมวก',            href: 'https://canva.link/al8chf1df8qsymw' },
         ],
       },
       valentine: { icon: '🌹', eyebrow: 'Season 03 · Valentine', title: 'Valentine', desc: 'หัวใจ ดอกไม้ ริบบิ้น บอลลูนวาเลนไทน์ และของตกแต่งแห่งความรัก สำหรับทั้ง B2B และ B2C' },
